@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/link.json",
+  "title": "Link",
+  "description": "Hypermedia link for related resources.",
+  "type": "object",
+  "required": ["rel", "href"],
+  "properties": {
+    "rel": {
+      "type": "string",
+      "description": "Link relation type."
+    },
+    "href": {
+      "type": "string",
+      "format": "uri",
+      "description": "Link URL."
+    },
+    "type": {
+      "type": "string",
+      "description": "Media type of the linked resource."
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable link title."
+    },
+    "hreflang": {
+      "type": "string",
+      "description": "Language of the linked resource."
+    }
+  }
+}

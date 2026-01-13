@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/quality_data.json",
+  "name": "dev.axp.quality_data",
+  "version": "2026-01-13",
+  "title": "Quality Data",
+  "description": "Quality signals and trust data for products and merchants including reviews, returns, and intent information.",
+  "type": "object",
+  "required": ["axp", "product_id"],
+  "additionalProperties": true,
+  "properties": {
+    "axp": {
+      "$ref": "axp.json#/$defs/response_quality",
+      "axp_request": "omit"
+    },
+    "product_id": {
+      "type": "string",
+      "description": "Product identifier this quality data relates to."
+    },
+    "reviews": {
+      "$ref": "types/reviews.json",
+      "description": "Product review data and aggregate ratings."
+    },
+    "returns": {
+      "$ref": "types/returns.json",
+      "description": "Return statistics and reasons."
+    },
+    "intent_signals": {
+      "$ref": "types/intent_signals.json",
+      "description": "Purchase intent and behavior signals."
+    },
+    "merchant_trust": {
+      "$ref": "types/merchant_trust.json",
+      "description": "Merchant trust and reputation information."
+    },
+    "product_trust": {
+      "$ref": "types/product_trust.json",
+      "description": "Product-specific trust signals."
+    },
+    "social_proof": {
+      "$ref": "types/social_proof.json",
+      "description": "Social proof indicators."
+    },
+    "quality_score": {
+      "type": "object",
+      "properties": {
+        "overall": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Composite quality score (0-100)."
+        },
+        "components": {
+          "type": "object",
+          "properties": {
+            "review_score": {"type": "number", "minimum": 0, "maximum": 100},
+            "return_score": {"type": "number", "minimum": 0, "maximum": 100},
+            "merchant_score": {"type": "number", "minimum": 0, "maximum": 100},
+            "authenticity_score": {"type": "number", "minimum": 0, "maximum": 100}
+          },
+          "description": "Individual component scores."
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Confidence level in the score (0-1)."
+        }
+      },
+      "description": "Computed quality score for the product."
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp."
+    }
+  }
+}

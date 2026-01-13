@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/axp.json",
+  "title": "AXP Metadata",
+  "description": "Agentic Experience Protocol (AXP) metadata. AXP extends UCP with product data, quality signals, and embedded experiences. Uses the same security patterns as UCP (ES256 signatures, JWK keys, detached JWS).",
+
+  "$defs": {
+    "version": {
+      "$ref": "https://ucp.dev/schemas/ucp.json#/$defs/version",
+      "description": "AXP protocol version in YYYY-MM-DD format (same format as UCP)."
+    },
+
+    "services": {
+      "type": "object",
+      "description": "Service definitions keyed by reverse-domain service name (compatible with UCP services).",
+      "additionalProperties": {"$ref": "https://ucp.dev/services/service_schema.json"}
+    },
+
+    "discovery_profile": {
+      "title": "AXP Discovery Profile",
+      "description": "AXP metadata for discovery. Can be included in /.well-known/ucp as an extension or standalone at /.well-known/axp.",
+      "type": "object",
+      "required": ["version", "capabilities"],
+      "properties": {
+        "version": {"$ref": "#/$defs/version"},
+        "services": {"$ref": "#/$defs/services"},
+        "capabilities": {
+          "type": "array",
+          "description": "Supported AXP capabilities. Each capability extends dev.ucp base capabilities.",
+          "items": {"$ref": "capability.json#/$defs/discovery"}
+        },
+        "merchant_trust": {
+          "$ref": "types/merchant_trust.json",
+          "description": "Trust and reputation information about the merchant."
+        },
+        "experience_sandbox": {
+          "$ref": "types/experience_sandbox_config.json",
+          "description": "Configuration for embedded experience sandboxing."
+        }
+      }
+    },
+
+    "response_product": {
+      "title": "AXP Product Response",
+      "description": "AXP metadata for product data responses. Compatible with UCP response format.",
+      "type": "object",
+      "required": ["version", "capabilities"],
+      "properties": {
+        "version": {"$ref": "#/$defs/version"},
+        "capabilities": {
+          "type": "array",
+          "description": "Active capabilities for this response.",
+          "items": {"$ref": "capability.json#/$defs/response"}
+        }
+      }
+    },
+
+    "response_quality": {
+      "title": "AXP Quality Response",
+      "description": "AXP metadata for quality data responses (reviews, returns, trust).",
+      "type": "object",
+      "required": ["version", "capabilities"],
+      "properties": {
+        "version": {"$ref": "#/$defs/version"},
+        "capabilities": {
+          "type": "array",
+          "description": "Active capabilities for this response.",
+          "items": {"$ref": "capability.json#/$defs/response"}
+        }
+      }
+    },
+
+    "response_experience": {
+      "title": "AXP Experience Response",
+      "description": "AXP metadata for embedded experience responses.",
+      "type": "object",
+      "required": ["version", "capabilities", "sandbox_policy"],
+      "properties": {
+        "version": {"$ref": "#/$defs/version"},
+        "capabilities": {
+          "type": "array",
+          "description": "Active capabilities for this response.",
+          "items": {"$ref": "capability.json#/$defs/response"}
+        },
+        "sandbox_policy": {
+          "$ref": "types/sandbox_policy.json",
+          "description": "Security policy for the embedded experience."
+        }
+      }
+    },
+
+    "signed_response": {
+      "title": "Signed AXP Response",
+      "description": "Wrapper for signed AXP responses using the same signature format as UCP.",
+      "type": "object",
+      "required": ["payload", "signature"],
+      "properties": {
+        "payload": {
+          "type": "object",
+          "description": "The actual response payload."
+        },
+        "signature": {
+          "type": "string",
+          "description": "Detached JWS signature (header..signature format) per RFC 7797, same as UCP Request-Signature."
+        }
+      }
+    }
+  }
+}

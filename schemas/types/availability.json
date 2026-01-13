@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/availability.json",
+  "title": "Availability",
+  "description": "Product availability and inventory information.",
+  "type": "object",
+  "required": ["status"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["in_stock", "out_of_stock", "preorder", "backorder", "discontinued", "limited"],
+      "description": "Current availability status."
+    },
+    "quantity": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Available quantity (if disclosed)."
+    },
+    "quantity_threshold": {
+      "type": "string",
+      "enum": ["plenty", "limited", "low", "last_items"],
+      "description": "Quantity indicator without exact numbers."
+    },
+    "restock_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Expected restock date for out of stock items."
+    },
+    "preorder_release_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Expected release date for preorder items."
+    },
+    "max_order_quantity": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Maximum quantity per order."
+    },
+    "min_order_quantity": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Minimum quantity per order."
+    },
+    "location_availability": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["location_id", "status"],
+        "properties": {
+          "location_id": {
+            "type": "string",
+            "description": "Store or warehouse identifier."
+          },
+          "location_name": {
+            "type": "string",
+            "description": "Human-readable location name."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["in_stock", "out_of_stock", "limited"]
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "pickup_available": {
+            "type": "boolean"
+          }
+        }
+      },
+      "description": "Per-location availability for omnichannel."
+    },
+    "real_time": {
+      "type": "boolean",
+      "description": "Whether availability data is real-time."
+    },
+    "last_checked": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last availability check timestamp."
+    }
+  }
+}

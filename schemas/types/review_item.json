@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/review_item.json",
+  "title": "Review Item",
+  "description": "Individual product review.",
+  "type": "object",
+  "required": ["id", "rating", "created_at"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Review identifier."
+    },
+    "rating": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Star rating (1-5)."
+    },
+    "title": {
+      "type": "string",
+      "description": "Review title."
+    },
+    "body": {
+      "type": "string",
+      "description": "Review text content."
+    },
+    "author": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"},
+        "verified_purchase": {"type": "boolean"},
+        "location": {"type": "string"},
+        "review_count": {"type": "integer"},
+        "helpful_votes_received": {"type": "integer"},
+        "badge": {"type": "string", "enum": ["top_reviewer", "expert", "verified_buyer"]}
+      },
+      "description": "Review author information."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Review creation timestamp."
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Review last update timestamp."
+    },
+    "variant_info": {
+      "type": "object",
+      "properties": {
+        "variant_id": {"type": "string"},
+        "attributes": {"type": "object", "additionalProperties": {"type": "string"}}
+      },
+      "description": "Which variant was reviewed."
+    },
+    "aspect_ratings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 5
+      },
+      "description": "Ratings for specific aspects."
+    },
+    "pros": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Listed pros/advantages."
+    },
+    "cons": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Listed cons/disadvantages."
+    },
+    "media": {
+      "type": "array",
+      "items": {"$ref": "media.json"},
+      "description": "Review photos/videos."
+    },
+    "helpful_votes": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of helpful votes."
+    },
+    "unhelpful_votes": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of unhelpful votes."
+    },
+    "merchant_response": {
+      "type": "object",
+      "properties": {
+        "body": {"type": "string"},
+        "created_at": {"type": "string", "format": "date-time"}
+      },
+      "description": "Merchant's response to the review."
+    },
+    "source": {
+      "type": "string",
+      "enum": ["verified_purchase", "syndicated", "merchant_collected", "third_party"],
+      "description": "Review source type."
+    },
+    "syndication_source": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"},
+        "url": {"type": "string", "format": "uri"}
+      },
+      "description": "Source details for syndicated reviews."
+    }
+  }
+}

@@ -1,0 +1,231 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/merchant_trust.json",
+  "title": "Merchant Trust",
+  "description": "Trust and reputation information about the merchant.",
+  "type": "object",
+  "properties": {
+    "merchant_id": {
+      "type": "string",
+      "description": "Merchant identifier."
+    },
+    "merchant_name": {
+      "type": "string",
+      "description": "Merchant display name."
+    },
+    "trust_score": {
+      "type": "object",
+      "properties": {
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Overall trust score (0-100)."
+        },
+        "tier": {
+          "type": "string",
+          "enum": ["platinum", "gold", "silver", "bronze", "unrated"],
+          "description": "Trust tier classification."
+        },
+        "last_updated": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "description": "Computed trust score."
+    },
+    "verification": {
+      "type": "object",
+      "properties": {
+        "business_verified": {
+          "type": "boolean",
+          "description": "Business identity verified."
+        },
+        "address_verified": {
+          "type": "boolean",
+          "description": "Physical address verified."
+        },
+        "payment_verified": {
+          "type": "boolean",
+          "description": "Payment processing verified."
+        },
+        "verification_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "verified_by": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Verification providers."
+        }
+      },
+      "description": "Verification status."
+    },
+    "certifications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "issuer": {"type": "string"},
+          "valid_until": {"type": "string", "format": "date"},
+          "verification_url": {"type": "string", "format": "uri"},
+          "badge_url": {"type": "string", "format": "uri"}
+        }
+      },
+      "description": "Trust certifications and badges."
+    },
+    "business_info": {
+      "type": "object",
+      "properties": {
+        "years_in_business": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "founded_year": {
+          "type": "integer"
+        },
+        "business_type": {
+          "type": "string",
+          "enum": ["manufacturer", "authorized_reseller", "retailer", "marketplace_seller", "direct_to_consumer"]
+        },
+        "headquarters_country": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code."
+        },
+        "company_size": {
+          "type": "string",
+          "enum": ["small", "medium", "large", "enterprise"]
+        }
+      },
+      "description": "Business information."
+    },
+    "performance_metrics": {
+      "type": "object",
+      "properties": {
+        "order_defect_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage of problematic orders."
+        },
+        "on_time_delivery_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "response_time_hours": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Average customer service response time."
+        },
+        "resolution_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Issue resolution rate."
+        },
+        "cancellation_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "description": "Merchant performance metrics."
+    },
+    "customer_ratings": {
+      "type": "object",
+      "properties": {
+        "overall_rating": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "rating_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "communication_rating": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "shipping_rating": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "product_accuracy_rating": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5
+        }
+      },
+      "description": "Customer ratings of the merchant."
+    },
+    "policies": {
+      "type": "object",
+      "properties": {
+        "return_window_days": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "free_returns": {
+          "type": "boolean"
+        },
+        "warranty_offered": {
+          "type": "boolean"
+        },
+        "price_match_guarantee": {
+          "type": "boolean"
+        },
+        "secure_checkout": {
+          "type": "boolean"
+        },
+        "buyer_protection": {
+          "type": "boolean"
+        }
+      },
+      "description": "Merchant policies."
+    },
+    "social_presence": {
+      "type": "object",
+      "properties": {
+        "website_url": {"type": "string", "format": "uri"},
+        "social_profiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "platform": {"type": "string"},
+              "url": {"type": "string", "format": "uri"},
+              "followers": {"type": "integer"}
+            }
+          }
+        },
+        "press_mentions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "publication": {"type": "string"},
+              "url": {"type": "string", "format": "uri"},
+              "date": {"type": "string", "format": "date"}
+            }
+          }
+        }
+      },
+      "description": "Social and media presence."
+    },
+    "sustainability": {
+      "type": "object",
+      "properties": {
+        "certifications": {"type": "array", "items": {"type": "string"}},
+        "carbon_neutral": {"type": "boolean"},
+        "ethical_sourcing": {"type": "boolean"},
+        "sustainability_report_url": {"type": "string", "format": "uri"}
+      },
+      "description": "Sustainability practices."
+    }
+  }
+}

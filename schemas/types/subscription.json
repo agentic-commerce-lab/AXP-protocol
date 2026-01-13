@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/subscription.json",
+  "title": "Subscription",
+  "description": "Subscription product configuration for recurring purchases and memberships.",
+  "type": "object",
+  "required": ["subscription_type", "billing_period"],
+  "properties": {
+    "subscription_type": {
+      "type": "string",
+      "enum": ["product_subscription", "membership", "service", "digital_content", "box"],
+      "description": "Type of subscription."
+    },
+    "billing_period": {
+      "type": "object",
+      "required": ["interval", "interval_count"],
+      "properties": {
+        "interval": {
+          "type": "string",
+          "enum": ["day", "week", "month", "year"],
+          "description": "Billing interval unit."
+        },
+        "interval_count": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of intervals per billing cycle."
+        }
+      },
+      "description": "Billing period configuration."
+    },
+    "pricing_plans": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "price", "billing_period"],
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "description": {"type": "string"},
+          "price": {"$ref": "price.json"},
+          "billing_period": {
+            "type": "object",
+            "properties": {
+              "interval": {"type": "string", "enum": ["day", "week", "month", "year"]},
+              "interval_count": {"type": "integer", "minimum": 1}
+            }
+          },
+          "trial": {
+            "type": "object",
+            "properties": {
+              "days": {"type": "integer", "minimum": 1},
+              "price": {"$ref": "price.json"}
+            }
+          },
+          "setup_fee": {"$ref": "price.json"},
+          "discount": {
+            "type": "object",
+            "properties": {
+              "percentage": {"type": "integer", "minimum": 0, "maximum": 100},
+              "compared_to_plan_id": {"type": "string"}
+            }
+          },
+          "features": {"type": "array", "items": {"type": "string"}},
+          "recommended": {"type": "boolean"}
+        }
+      },
+      "description": "Available pricing plans."
+    },
+    "delivery_frequency": {
+      "type": "object",
+      "properties": {
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "label", "interval", "interval_count"],
+            "properties": {
+              "id": {"type": "string"},
+              "label": {"type": "string"},
+              "interval": {"type": "string", "enum": ["day", "week", "month"]},
+              "interval_count": {"type": "integer", "minimum": 1},
+              "price_adjustment": {"$ref": "price.json"}
+            }
+          }
+        },
+        "default_option_id": {"type": "string"}
+      },
+      "description": "Delivery frequency options for physical subscriptions."
+    },
+    "commitment": {
+      "type": "object",
+      "properties": {
+        "minimum_periods": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Minimum commitment periods."
+        },
+        "cancellation_notice_days": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Days notice required for cancellation."
+        },
+        "early_cancellation_fee": {"$ref": "price.json"}
+      },
+      "description": "Commitment requirements."
+    },
+    "pause_options": {
+      "type": "object",
+      "properties": {
+        "allowed": {"type": "boolean"},
+        "max_pause_periods": {"type": "integer", "minimum": 1},
+        "max_pause_days": {"type": "integer", "minimum": 1}
+      },
+      "description": "Subscription pause options."
+    },
+    "skip_options": {
+      "type": "object",
+      "properties": {
+        "allowed": {"type": "boolean"},
+        "max_consecutive_skips": {"type": "integer", "minimum": 1},
+        "skip_deadline_days": {"type": "integer", "minimum": 0}
+      },
+      "description": "Delivery skip options."
+    },
+    "customization": {
+      "type": "object",
+      "properties": {
+        "product_swap_allowed": {"type": "boolean"},
+        "quantity_change_allowed": {"type": "boolean"},
+        "add_ons_available": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "product_id": {"type": "string"},
+              "price": {"$ref": "price.json"}
+            }
+          }
+        }
+      },
+      "description": "Subscription customization options."
+    },
+    "benefits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {"type": "string", "enum": ["discount", "free_shipping", "exclusive_access", "priority_support", "gift", "points"]},
+          "description": {"type": "string"},
+          "value": {"type": "string"}
+        }
+      },
+      "description": "Subscriber benefits."
+    }
+  }
+}

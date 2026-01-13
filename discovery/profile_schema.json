@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/discovery/profile.json",
+  "title": "AXP Discovery Profile",
+  "description": "Schema for AXP discovery profile. AXP can be discovered either as an extension within UCP's /.well-known/ucp profile or standalone at /.well-known/axp. Uses the same security model as UCP.",
+  "type": "object",
+  "additionalProperties": true,
+  "oneOf": [
+    {
+      "title": "Standalone AXP Profile",
+      "description": "AXP profile served at /.well-known/axp",
+      "required": ["axp", "signing_keys"],
+      "properties": {
+        "axp": {
+          "$ref": "../schemas/axp.json#/$defs/discovery_profile"
+        }
+      }
+    },
+    {
+      "title": "UCP-Integrated AXP Profile",
+      "description": "AXP as extension within UCP profile at /.well-known/ucp",
+      "required": ["ucp", "axp"],
+      "properties": {
+        "ucp": {
+          "$ref": "https://ucp.dev/schemas/ucp.json#/$defs/discovery_profile"
+        },
+        "axp": {
+          "$ref": "../schemas/axp.json#/$defs/discovery_profile"
+        }
+      }
+    }
+  ],
+  "properties": {
+    "ucp": {
+      "$ref": "https://ucp.dev/schemas/ucp.json#/$defs/discovery_profile",
+      "description": "UCP protocol metadata (when AXP is an addon to UCP)."
+    },
+    "axp": {
+      "$ref": "../schemas/axp.json#/$defs/discovery_profile",
+      "description": "AXP protocol metadata."
+    },
+    "signing_keys": {
+      "type": "array",
+      "description": "Public keys for signature verification (JWK format). Same format as UCP. Shared between UCP and AXP when used together.",
+      "items": {
+        "$ref": "../schemas/security.json#/$defs/signing_key"
+      }
+    },
+    "merchant_trust": {
+      "$ref": "../schemas/types/merchant_trust.json",
+      "description": "Trust and reputation information about the merchant."
+    },
+    "experience_sandbox": {
+      "$ref": "../schemas/types/experience_sandbox_config.json",
+      "description": "Global configuration for embedded experience sandboxing."
+    },
+    "product_catalog": {
+      "type": "object",
+      "properties": {
+        "total_products": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total products available."
+        },
+        "supported_product_types": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["simple", "variant", "configurable", "bundle", "event", "subscription", "digital", "service"]
+          },
+          "description": "Product types available in catalog."
+        },
+        "categories_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "brands_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "last_updated": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "description": "Product catalog overview."
+    },
+    "quality_data": {
+      "type": "object",
+      "properties": {
+        "reviews_enabled": {
+          "type": "boolean"
+        },
+        "returns_data_enabled": {
+          "type": "boolean"
+        },
+        "intent_signals_enabled": {
+          "type": "boolean"
+        },
+        "trust_data_enabled": {
+          "type": "boolean"
+        },
+        "data_freshness_hours": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "How fresh quality data is."
+        }
+      },
+      "description": "Quality data availability."
+    },
+    "experiences": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "supported_types": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["viewer_3d", "configurator", "ar", "video", "virtual_try_on", "size_finder", "comparison", "custom"]
+          }
+        },
+        "total_experiences": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "content_signing_enabled": {
+          "type": "boolean",
+          "description": "Whether experience content is signed for integrity verification."
+        }
+      },
+      "description": "Embedded experiences availability."
+    }
+  }
+}

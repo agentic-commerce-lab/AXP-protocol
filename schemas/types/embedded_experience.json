@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/embedded_experience.json",
+  "title": "Embedded Experience",
+  "description": "Reference to an embedded experience for inline product data.",
+  "type": "object",
+  "required": ["id", "type"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Experience identifier."
+    },
+    "type": {
+      "type": "string",
+      "enum": ["viewer_3d", "configurator", "ar", "video", "virtual_try_on", "size_finder", "comparison", "custom"],
+      "description": "Type of experience."
+    },
+    "title": {
+      "type": "string",
+      "description": "Experience title."
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description."
+    },
+    "thumbnail_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Thumbnail image for the experience."
+    },
+    "experience_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to fetch full experience definition."
+    },
+    "inline_config": {
+      "type": "object",
+      "properties": {
+        "auto_load": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to auto-load the experience."
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Display priority (lower = higher priority)."
+        },
+        "placement": {
+          "type": "string",
+          "enum": ["primary", "gallery", "detail", "sidebar", "modal"],
+          "description": "Recommended placement."
+        }
+      },
+      "description": "Inline configuration hints."
+    },
+    "capabilities_required": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["webgl", "webgl2", "webxr", "camera", "gyroscope"]
+      },
+      "description": "Required capabilities (for filtering)."
+    },
+    "estimated_load_time_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Estimated load time."
+    }
+  }
+}

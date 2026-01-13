@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/digital.json",
+  "title": "Digital",
+  "description": "Digital product delivery and access configuration.",
+  "type": "object",
+  "required": ["delivery_type"],
+  "properties": {
+    "delivery_type": {
+      "type": "string",
+      "enum": ["download", "stream", "license_key", "access_code", "api_access", "email_delivery"],
+      "description": "How the digital product is delivered."
+    },
+    "file_info": {
+      "type": "object",
+      "properties": {
+        "format": {"type": "string", "description": "File format (e.g., 'PDF', 'MP3', 'ZIP')."},
+        "size_bytes": {"type": "integer", "minimum": 0},
+        "version": {"type": "string"},
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "format": {"type": "string"},
+              "size_bytes": {"type": "integer"}
+            }
+          }
+        }
+      },
+      "description": "File information for downloadable products."
+    },
+    "access": {
+      "type": "object",
+      "properties": {
+        "type": {"type": "string", "enum": ["unlimited", "time_limited", "download_limited", "concurrent_limited"]},
+        "duration_days": {"type": "integer", "minimum": 1},
+        "download_limit": {"type": "integer", "minimum": 1},
+        "concurrent_devices": {"type": "integer", "minimum": 1},
+        "offline_access": {"type": "boolean"}
+      },
+      "description": "Access restrictions and limits."
+    },
+    "drm": {
+      "type": "object",
+      "properties": {
+        "protected": {"type": "boolean"},
+        "type": {"type": "string", "enum": ["adobe_drm", "watermark", "custom"]},
+        "requirements": {"type": "string"}
+      },
+      "description": "DRM protection information."
+    },
+    "requirements": {
+      "type": "object",
+      "properties": {
+        "platforms": {"type": "array", "items": {"type": "string"}},
+        "min_software_version": {"type": "string"},
+        "hardware_requirements": {"type": "string"}
+      },
+      "description": "System requirements."
+    },
+    "preview": {
+      "type": "object",
+      "properties": {
+        "available": {"type": "boolean"},
+        "url": {"type": "string", "format": "uri"},
+        "type": {"type": "string", "enum": ["sample", "trial", "demo", "preview"]}
+      },
+      "description": "Preview/trial availability."
+    },
+    "license": {
+      "type": "object",
+      "properties": {
+        "type": {"type": "string", "enum": ["personal", "commercial", "enterprise", "educational"]},
+        "seats": {"type": "integer", "minimum": 1},
+        "transferable": {"type": "boolean"},
+        "terms_url": {"type": "string", "format": "uri"}
+      },
+      "description": "License terms."
+    }
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/bundle.json",
+  "title": "Bundle",
+  "description": "Product bundle configuration for grouped products.",
+  "type": "object",
+  "required": ["bundle_type", "items"],
+  "properties": {
+    "bundle_type": {
+      "type": "string",
+      "enum": ["fixed", "configurable", "mix_and_match", "bogo"],
+      "description": "Type of bundle configuration."
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["product_id"],
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "description": "ID of bundled product."
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Quantity of this product in bundle."
+          },
+          "quantity_selectable": {
+            "type": "boolean",
+            "description": "Whether quantity can be changed."
+          },
+          "min_quantity": {"type": "integer", "minimum": 0},
+          "max_quantity": {"type": "integer", "minimum": 1},
+          "optional": {
+            "type": "boolean",
+            "description": "Whether this item is optional in the bundle."
+          },
+          "default_selected": {
+            "type": "boolean",
+            "description": "Whether this item is selected by default."
+          },
+          "price_adjustment": {"$ref": "price.json"},
+          "title_override": {"type": "string"},
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "product_id": {"type": "string"},
+                "price_adjustment": {"$ref": "price.json"}
+              }
+            },
+            "description": "Alternative products for this bundle slot."
+          }
+        }
+      },
+      "description": "Bundle items."
+    },
+    "pricing": {
+      "type": "object",
+      "properties": {
+        "type": {"type": "string", "enum": ["fixed", "sum", "discounted_sum"]},
+        "discount_percentage": {"type": "integer", "minimum": 0, "maximum": 100},
+        "discount_amount": {"$ref": "price.json"},
+        "show_savings": {"type": "boolean"}
+      },
+      "description": "Bundle pricing configuration."
+    },
+    "min_items": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Minimum items required for mix-and-match bundles."
+    },
+    "max_items": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Maximum items allowed for mix-and-match bundles."
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "min_selections": {"type": "integer"},
+          "max_selections": {"type": "integer"},
+          "product_ids": {"type": "array", "items": {"type": "string"}}
+        }
+      },
+      "description": "Categories for mix-and-match bundle selection."
+    },
+    "separate_shipping": {
+      "type": "boolean",
+      "description": "Whether bundle items ship separately."
+    }
+  }
+}

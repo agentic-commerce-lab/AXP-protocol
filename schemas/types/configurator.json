@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/configurator.json",
+  "title": "Configurator",
+  "description": "Product configurator for complex customization with dependencies and rules.",
+  "type": "object",
+  "required": ["steps", "pricing_model"],
+  "properties": {
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "options"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Step identifier."
+          },
+          "label": {
+            "type": "string",
+            "description": "Step label for display."
+          },
+          "description": {
+            "type": "string",
+            "description": "Step description or instructions."
+          },
+          "required": {
+            "type": "boolean",
+            "description": "Whether this step must be completed."
+          },
+          "type": {
+            "type": "string",
+            "enum": ["single_select", "multi_select", "text_input", "number_input", "file_upload", "color_picker", "dimension_input"],
+            "description": "Input type for this step."
+          },
+          "options": {
+            "type": "array",
+            "items": {"$ref": "configurator_option.json"},
+            "description": "Available options for this step."
+          },
+          "validation": {
+            "type": "object",
+            "properties": {
+              "min": {"type": "number"},
+              "max": {"type": "number"},
+              "pattern": {"type": "string"},
+              "min_selections": {"type": "integer"},
+              "max_selections": {"type": "integer"}
+            },
+            "description": "Validation rules for the step input."
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["step_id", "condition"],
+              "properties": {
+                "step_id": {"type": "string"},
+                "condition": {
+                  "type": "object",
+                  "properties": {
+                    "operator": {"type": "string", "enum": ["equals", "not_equals", "in", "not_in"]},
+                    "value": {}
+                  }
+                }
+              }
+            },
+            "description": "Dependencies on other steps."
+          }
+        }
+      },
+      "description": "Configuration steps in order."
+    },
+    "pricing_model": {
+      "type": "string",
+      "enum": ["fixed", "additive", "formula", "request_quote"],
+      "description": "How pricing is calculated from configuration."
+    },
+    "base_price": {
+      "$ref": "price.json",
+      "description": "Base price before configuration options."
+    },
+    "lead_time": {
+      "type": "object",
+      "properties": {
+        "min_days": {"type": "integer", "minimum": 0},
+        "max_days": {"type": "integer", "minimum": 0},
+        "message": {"type": "string"}
+      },
+      "description": "Production/delivery lead time for configured products."
+    },
+    "preview_generator": {
+      "type": "object",
+      "properties": {
+        "type": {"type": "string", "enum": ["image_composite", "3d_render", "live_preview"]},
+        "endpoint": {"type": "string", "format": "uri"}
+      },
+      "description": "Preview generation configuration."
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "rule"],
+        "properties": {
+          "id": {"type": "string"},
+          "type": {"type": "string", "enum": ["incompatible", "requires", "price_modifier", "availability"]},
+          "rule": {"type": "object", "additionalProperties": true},
+          "message": {"type": "string"}
+        }
+      },
+      "description": "Global constraints and rules across configuration."
+    },
+    "embedded_configurator": {
+      "$ref": "embedded_experience.json",
+      "description": "Reference to embedded visual configurator experience."
+    }
+  }
+}

@@ -1,0 +1,319 @@
+{
+  "openrpc": "1.2.6",
+  "info": {
+    "title": "AXP - Agentic Experience Protocol MCP",
+    "version": "2026-01-13",
+    "description": "Model Context Protocol (MCP) interface for the Agentic Experience Protocol (AXP). Enables AI agents to access product data, quality signals, and embedded experiences.",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0"
+    }
+  },
+  "servers": [
+    {
+      "name": "AXP MCP Server",
+      "url": "mcp://{merchant}/axp",
+      "description": "Merchant AXP MCP endpoint"
+    }
+  ],
+  "methods": [
+    {
+      "name": "axp.getProduct",
+      "summary": "Get product details",
+      "description": "Retrieve detailed information about a specific product including variants, pricing, and availability.",
+      "params": [
+        {
+          "name": "product_id",
+          "required": true,
+          "schema": {"type": "string"},
+          "description": "Product identifier."
+        },
+        {
+          "name": "include_quality",
+          "required": false,
+          "schema": {"type": "boolean", "default": false},
+          "description": "Include quality signals."
+        },
+        {
+          "name": "include_experiences",
+          "required": false,
+          "schema": {"type": "boolean", "default": false},
+          "description": "Include available experiences."
+        },
+        {
+          "name": "variant_id",
+          "required": false,
+          "schema": {"type": "string"},
+          "description": "Specific variant to return."
+        }
+      ],
+      "result": {
+        "name": "product",
+        "schema": {"$ref": "../schemas/product.json"}
+      },
+      "tags": [{"name": "Product Data"}]
+    },
+    {
+      "name": "axp.searchProducts",
+      "summary": "Search products",
+      "description": "Search for products with filters and full-text search.",
+      "params": [
+        {
+          "name": "query",
+          "required": false,
+          "schema": {"type": "string"},
+          "description": "Search query text."
+        },
+        {
+          "name": "filters",
+          "required": false,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "category": {"type": "string"},
+              "brand": {"type": "string"},
+              "product_type": {"type": "string"},
+              "price_min": {"type": "integer"},
+              "price_max": {"type": "integer"},
+              "in_stock_only": {"type": "boolean"},
+              "attributes": {"type": "object", "additionalProperties": true}
+            }
+          },
+          "description": "Filter criteria."
+        },
+        {
+          "name": "sort": {
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": ["relevance", "price_asc", "price_desc", "rating", "newest"]
+          }
+          },
+          "description": "Sort order."
+        },
+        {
+          "name": "limit",
+          "required": false,
+          "schema": {"type": "integer", "default": 20, "maximum": 100}
+        },
+        {
+          "name": "offset",
+          "required": false,
+          "schema": {"type": "integer", "default": 0}
+        }
+      ],
+      "result": {
+        "name": "searchResults",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "products": {"type": "array", "items": {"$ref": "../schemas/product.json"}},
+            "total": {"type": "integer"},
+            "facets": {"type": "object"}
+          }
+        }
+      },
+      "tags": [{"name": "Product Data"}]
+    },
+    {
+      "name": "axp.getVariants",
+      "summary": "Get product variants",
+      "description": "Retrieve all variants for a product with their dimensions and availability.",
+      "params": [
+        {
+          "name": "product_id",
+          "required": true,
+          "schema": {"type": "string"}
+        }
+      ],
+      "result": {
+        "name": "variants",
+        "schema": {"$ref": "../schemas/types/variants.json"}
+      },
+      "tags": [{"name": "Product Data"}]
+    },
+    {
+      "name": "axp.calculateConfiguration",
+      "summary": "Calculate product configuration",
+      "description": "Calculate price, availability, and lead time for a specific product configuration.",
+      "params": [
+        {
+          "name": "product_id",
+          "required": true,
+          "schema": {"type": "string"}
+        },
+        {
+          "name": "selections",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "description": "Map of configurator step ID to selected option ID(s)."
+        }
+      ],
+      "result": {
+        "name": "configurationResult",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "valid": {"type": "boolean"},
+            "price": {"$ref": "../schemas/types/price.json"},
+            "availability": {"$ref": "../schemas/types/availability.json"},
+            "lead_time_days": {"type": "integer"},
+            "sku": {"type": "string"},
+            "warnings": {"type": "array", "items": {"type": "string"}},
+            "errors": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      },
+      "tags": [{"name": "Product Data"}]
+    },
+    {
+      "name": "axp.getQualityData",
+      "summary": "Get product quality data",
+      "description": "Retrieve quality signals including reviews, returns, and trust information for a product.",
+      "params": [
+        {
+          "name": "product_id",
+          "required": true,
+          "schema": {"type": "string"}
+        },
+        {
+          "name": "include",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["reviews", "returns", "intent", "trust", "social_proof"]
+            }
+          },
+          "description": "Sections to include."
+        }
+      ],
+      "result": {
+        "name": "qualityData",
+        "schema": {"$ref": "../schemas/quality_data.json"}
+      },
+      "tags": [{"name": "Quality Data"}]
+    },
+    {
+      "name": "axp.getReviews",
+      "summary": "Get product reviews",
+      "description": "Retrieve paginated reviews for a product with filtering and sorting.",
+      "params": [
+        {
+          "name": "product_id",
+          "required": true,
+          "schema": {"type": "string"}
+        },
+        {
+          "name": "sort",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": ["recent", "helpful", "rating_high", "rating_low"]
+          }
+        },
+        {
+          "name": "rating_filter",
+          "required": false,
+          "schema": {"type": "integer", "minimum": 1, "maximum": 5}
+        },
+        {
+          "name": "verified_only",
+          "required": false,
+          "schema": {"type": "boolean", "default": false}
+        },
+        {
+          "name": "limit",
+          "required": false,
+          "schema": {"type": "integer", "default": 10, "maximum": 50}
+        },
+        {
+          "name": "offset",
+          "required": false,
+          "schema": {"type": "integer", "default": 0}
+        }
+      ],
+      "result": {
+        "name": "reviews",
+        "schema": {"$ref": "../schemas/types/reviews.json"}
+      },
+      "tags": [{"name": "Quality Data"}]
+    },
+    {
+      "name": "axp.getMerchantTrust",
+      "summary": "Get merchant trust information",
+      "description": "Retrieve trust and reputation information about the merchant.",
+      "params": [],
+      "result": {
+        "name": "merchantTrust",
+        "schema": {"$ref": "../schemas/types/merchant_trust.json"}
+      },
+      "tags": [{"name": "Quality Data"}]
+    },
+    {
+      "name": "axp.getExperience",
+      "summary": "Get embedded experience",
+      "description": "Retrieve full experience definition including sandbox policy and entry point for embedding.",
+      "params": [
+        {
+          "name": "experience_id",
+          "required": true,
+          "schema": {"type": "string"}
+        }
+      ],
+      "result": {
+        "name": "experience",
+        "schema": {"$ref": "../schemas/experience.json"}
+      },
+      "tags": [{"name": "Experience Embedding"}]
+    },
+    {
+      "name": "axp.listExperiences",
+      "summary": "List available experiences",
+      "description": "List embedded experiences available for a product.",
+      "params": [
+        {
+          "name": "product_id",
+          "required": true,
+          "schema": {"type": "string"}
+        },
+        {
+          "name": "type_filter",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": ["viewer_3d", "configurator", "ar", "video", "virtual_try_on", "size_finder", "custom"]
+          }
+        }
+      ],
+      "result": {
+        "name": "experiences",
+        "schema": {
+          "type": "array",
+          "items": {"$ref": "../schemas/types/embedded_experience.json"}
+        }
+      },
+      "tags": [{"name": "Experience Embedding"}]
+    }
+  ],
+  "components": {
+    "tags": [
+      {
+        "name": "Product Data",
+        "description": "Methods for accessing product information, variants, and configurations."
+      },
+      {
+        "name": "Quality Data",
+        "description": "Methods for accessing reviews, returns, and trust signals."
+      },
+      {
+        "name": "Experience Embedding",
+        "description": "Methods for accessing sandboxed embedded experiences."
+      }
+    ]
+  }
+}

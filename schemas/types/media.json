@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/media.json",
+  "title": "Media",
+  "description": "Product media item (image, video, 3D model, etc.).",
+  "type": "object",
+  "required": ["type", "url"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": ["image", "video", "model_3d", "ar_asset", "document", "audio"],
+      "description": "Media type."
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Media URL."
+    },
+    "alt": {
+      "type": "string",
+      "description": "Alt text for accessibility."
+    },
+    "title": {
+      "type": "string",
+      "description": "Media title."
+    },
+    "position": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Display order position."
+    },
+    "primary": {
+      "type": "boolean",
+      "description": "Whether this is the primary media item."
+    },
+    "dimensions": {
+      "type": "object",
+      "properties": {
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1}
+      },
+      "description": "Media dimensions in pixels."
+    },
+    "thumbnails": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["url", "size"],
+        "properties": {
+          "url": {"type": "string", "format": "uri"},
+          "size": {
+            "type": "string",
+            "enum": ["xs", "sm", "md", "lg", "xl"]
+          },
+          "width": {"type": "integer"},
+          "height": {"type": "integer"}
+        }
+      },
+      "description": "Thumbnail variants."
+    },
+    "video_info": {
+      "type": "object",
+      "properties": {
+        "duration_seconds": {"type": "integer", "minimum": 0},
+        "poster_url": {"type": "string", "format": "uri"},
+        "provider": {"type": "string", "enum": ["self_hosted", "youtube", "vimeo", "other"]}
+      },
+      "description": "Video-specific metadata."
+    },
+    "model_3d_info": {
+      "type": "object",
+      "properties": {
+        "format": {"type": "string", "enum": ["glb", "gltf", "usdz", "obj", "fbx"]},
+        "file_size_kb": {"type": "integer", "minimum": 1},
+        "ar_compatible": {"type": "boolean"},
+        "ios_ar_url": {"type": "string", "format": "uri", "description": "USDZ URL for iOS AR Quick Look."},
+        "android_ar_url": {"type": "string", "format": "uri", "description": "GLB URL for Android Scene Viewer."}
+      },
+      "description": "3D model specific metadata."
+    },
+    "variant_ids": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Variant IDs this media is associated with."
+    }
+  }
+}

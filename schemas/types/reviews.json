@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/reviews.json",
+  "title": "Reviews",
+  "description": "Product review data with aggregates and individual reviews.",
+  "type": "object",
+  "properties": {
+    "aggregate": {
+      "type": "object",
+      "required": ["rating", "count"],
+      "properties": {
+        "rating": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5,
+          "description": "Average rating (0-5 scale)."
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of reviews."
+        },
+        "rating_distribution": {
+          "type": "object",
+          "properties": {
+            "5": {"type": "integer", "minimum": 0},
+            "4": {"type": "integer", "minimum": 0},
+            "3": {"type": "integer", "minimum": 0},
+            "2": {"type": "integer", "minimum": 0},
+            "1": {"type": "integer", "minimum": 0}
+          },
+          "description": "Count of reviews per rating level."
+        },
+        "recommendation_percentage": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage who would recommend."
+        },
+        "verified_purchase_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of verified purchase reviews."
+        }
+      },
+      "description": "Aggregate review statistics."
+    },
+    "aspect_ratings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["aspect", "rating"],
+        "properties": {
+          "aspect": {
+            "type": "string",
+            "description": "Aspect being rated (e.g., 'quality', 'value', 'comfort')."
+          },
+          "rating": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 5
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "description": "Ratings broken down by aspect."
+    },
+    "sentiment_summary": {
+      "type": "object",
+      "properties": {
+        "positive_themes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "theme": {"type": "string"},
+              "mention_count": {"type": "integer"},
+              "sentiment_score": {"type": "number", "minimum": -1, "maximum": 1}
+            }
+          }
+        },
+        "negative_themes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "theme": {"type": "string"},
+              "mention_count": {"type": "integer"},
+              "sentiment_score": {"type": "number", "minimum": -1, "maximum": 1}
+            }
+          }
+        },
+        "common_phrases": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      },
+      "description": "AI-extracted sentiment summary."
+    },
+    "featured_reviews": {
+      "type": "array",
+      "items": {"$ref": "review_item.json"},
+      "description": "Featured/highlighted reviews."
+    },
+    "recent_reviews": {
+      "type": "array",
+      "items": {"$ref": "review_item.json"},
+      "description": "Most recent reviews."
+    },
+    "review_sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source": {"type": "string", "enum": ["verified_purchase", "syndicated", "merchant_collected", "third_party"]},
+          "count": {"type": "integer"},
+          "source_name": {"type": "string"}
+        }
+      },
+      "description": "Breakdown of review sources."
+    },
+    "media_reviews_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of reviews with photos/videos."
+    },
+    "qa": {
+      "type": "object",
+      "properties": {
+        "total_questions": {"type": "integer", "minimum": 0},
+        "answered_questions": {"type": "integer", "minimum": 0},
+        "featured_qa": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "question": {"type": "string"},
+              "answer": {"type": "string"},
+              "answered_by": {"type": "string", "enum": ["merchant", "customer", "community"]},
+              "helpful_count": {"type": "integer"}
+            }
+          }
+        }
+      },
+      "description": "Q&A data."
+    }
+  }
+}

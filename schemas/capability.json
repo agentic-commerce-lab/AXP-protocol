@@ -1,0 +1,193 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/capability.json",
+  "title": "AXP Capability",
+  "description": "Capability definitions for the Agentic Experience Protocol. AXP capabilities extend UCP's capability system using the 'extends' field pattern.",
+
+  "$defs": {
+    "base": {
+      "description": "Base capability structure following UCP capability pattern.",
+      "allOf": [
+        {"$ref": "https://ucp.dev/schemas/capability.json#/$defs/base"},
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "pattern": "^dev\\.axp\\.[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$",
+              "description": "AXP capability identifier in reverse-domain notation (e.g., dev.axp.product_data)."
+            },
+            "extends": {
+              "type": "string",
+              "pattern": "^dev\\.(ucp|axp)\\.[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$",
+              "description": "Parent capability this extends. AXP capabilities can extend UCP or other AXP capabilities."
+            }
+          }
+        }
+      ]
+    },
+
+    "capability_name": {
+      "type": "string",
+      "enum": [
+        "dev.axp.product_data",
+        "dev.axp.product_data.variants",
+        "dev.axp.product_data.configurator",
+        "dev.axp.product_data.events",
+        "dev.axp.product_data.subscriptions",
+        "dev.axp.product_data.bundles",
+        "dev.axp.product_data.digital",
+        "dev.axp.quality_data",
+        "dev.axp.quality_data.reviews",
+        "dev.axp.quality_data.returns",
+        "dev.axp.quality_data.intent",
+        "dev.axp.quality_data.trust",
+        "dev.axp.experience_embedding",
+        "dev.axp.experience_embedding.viewer_3d",
+        "dev.axp.experience_embedding.configurator",
+        "dev.axp.experience_embedding.ar",
+        "dev.axp.experience_embedding.video",
+        "dev.axp.experience_embedding.custom"
+      ],
+      "description": "Standardized AXP capability names following reverse-domain convention."
+    },
+
+    "discovery": {
+      "title": "Capability (Discovery)",
+      "description": "Full capability declaration for discovery profiles. Compatible with UCP capability discovery format.",
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {
+          "type": "object",
+          "required": ["name", "version", "spec", "schema"],
+          "properties": {
+            "spec": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to human-readable specification document."
+            },
+            "schema": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to JSON Schema for this capability's payload."
+            },
+            "config": {
+              "oneOf": [
+                {"$ref": "#/$defs/product_data_config"},
+                {"$ref": "#/$defs/quality_data_config"},
+                {"$ref": "#/$defs/experience_embedding_config"},
+                {"type": "object", "additionalProperties": true}
+              ],
+              "description": "Capability-specific configuration."
+            }
+          }
+        }
+      ]
+    },
+
+    "response": {
+      "title": "Capability (Response)",
+      "description": "Capability reference in responses. Same format as UCP capability responses.",
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {"required": ["name", "version"]}
+      ]
+    },
+
+    "product_data_config": {
+      "title": "Product Data Capability Config",
+      "type": "object",
+      "properties": {
+        "supported_product_types": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["simple", "variant", "configurable", "bundle", "event", "subscription", "digital", "service"]
+          },
+          "description": "Product types supported by the merchant."
+        },
+        "max_variants_per_product": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum number of variants per product."
+        },
+        "supports_real_time_inventory": {
+          "type": "boolean",
+          "description": "Whether real-time inventory data is available."
+        },
+        "supports_real_time_pricing": {
+          "type": "boolean",
+          "description": "Whether real-time pricing is available."
+        },
+        "item_schema_extensions": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Additional item fields beyond UCP's base item schema."
+        }
+      }
+    },
+
+    "quality_data_config": {
+      "title": "Quality Data Capability Config",
+      "type": "object",
+      "properties": {
+        "review_sources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["verified_purchase", "syndicated", "merchant_collected", "third_party"]
+          },
+          "description": "Sources of review data."
+        },
+        "return_data_granularity": {
+          "type": "string",
+          "enum": ["aggregate", "category", "product", "variant"],
+          "description": "Level of detail for return data."
+        },
+        "trust_certifications": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Trust certifications held by the merchant."
+        },
+        "data_freshness_guarantee_hours": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum age of quality data in hours."
+        }
+      }
+    },
+
+    "experience_embedding_config": {
+      "title": "Experience Embedding Capability Config",
+      "type": "object",
+      "properties": {
+        "supported_experience_types": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["viewer_3d", "configurator", "ar", "video", "virtual_try_on", "size_finder", "custom"]
+          },
+          "description": "Types of embedded experiences supported."
+        },
+        "sandbox_requirements": {
+          "$ref": "types/sandbox_policy.json",
+          "description": "Minimum sandbox requirements for experiences."
+        },
+        "max_experience_size_kb": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum size of experience bundle in KB."
+        },
+        "supports_offline": {
+          "type": "boolean",
+          "description": "Whether experiences support offline mode."
+        },
+        "content_signing_required": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether experience bundles must be signed (uses same ES256 signatures as UCP)."
+        }
+      }
+    }
+  }
+}

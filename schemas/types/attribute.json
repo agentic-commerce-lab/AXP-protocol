@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/attribute.json",
+  "title": "Attribute",
+  "description": "Product attribute with typed values.",
+  "type": "object",
+  "required": ["code", "label", "value"],
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "Machine-readable attribute code."
+    },
+    "label": {
+      "type": "string",
+      "description": "Human-readable attribute label."
+    },
+    "value": {
+      "oneOf": [
+        {"type": "string"},
+        {"type": "number"},
+        {"type": "boolean"},
+        {"type": "array", "items": {"type": "string"}}
+      ],
+      "description": "Attribute value (string, number, boolean, or array)."
+    },
+    "value_label": {
+      "type": "string",
+      "description": "Human-readable value label (for coded values)."
+    },
+    "unit": {
+      "type": "string",
+      "description": "Unit of measurement (e.g., 'cm', 'kg', 'ml')."
+    },
+    "group": {
+      "type": "string",
+      "description": "Attribute group for organization."
+    },
+    "filterable": {
+      "type": "boolean",
+      "description": "Whether this attribute can be used for filtering."
+    },
+    "comparable": {
+      "type": "boolean",
+      "description": "Whether this attribute should be shown in comparisons."
+    },
+    "visual": {
+      "type": "object",
+      "properties": {
+        "type": {"type": "string", "enum": ["color", "image", "icon"]},
+        "value": {"type": "string", "description": "Hex color code, image URL, or icon name."}
+      },
+      "description": "Visual representation for the attribute."
+    }
+  }
+}

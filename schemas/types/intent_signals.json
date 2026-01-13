@@ -1,0 +1,183 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/intent_signals.json",
+  "title": "Intent Signals",
+  "description": "Purchase intent and behavior signals for product recommendations.",
+  "type": "object",
+  "properties": {
+    "demand_indicators": {
+      "type": "object",
+      "properties": {
+        "popularity_rank": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Popularity rank within category."
+        },
+        "trending": {
+          "type": "boolean",
+          "description": "Whether product is trending."
+        },
+        "trending_direction": {
+          "type": "string",
+          "enum": ["rising", "stable", "declining"]
+        },
+        "velocity": {
+          "type": "string",
+          "enum": ["slow", "moderate", "fast", "very_fast"],
+          "description": "Sales velocity indicator."
+        },
+        "view_to_purchase_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Conversion rate from views to purchases."
+        },
+        "add_to_cart_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Rate of adding to cart after viewing."
+        },
+        "wishlist_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of wishlists containing this product."
+        }
+      },
+      "description": "Demand and popularity indicators."
+    },
+    "buyer_segments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "segment": {
+            "type": "string",
+            "description": "Buyer segment identifier."
+          },
+          "percentage": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "characteristics": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        }
+      },
+      "description": "Buyer segment distribution."
+    },
+    "purchase_patterns": {
+      "type": "object",
+      "properties": {
+        "repeat_purchase_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Percentage of customers who repurchase."
+        },
+        "avg_time_to_repurchase_days": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "common_purchase_occasions": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Common occasions for purchase."
+        },
+        "peak_purchase_times": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "day_of_week": {"type": "integer", "minimum": 0, "maximum": 6},
+              "hour_of_day": {"type": "integer", "minimum": 0, "maximum": 23}
+            }
+          }
+        },
+        "seasonality": {
+          "type": "object",
+          "properties": {
+            "seasonal": {"type": "boolean"},
+            "peak_months": {"type": "array", "items": {"type": "integer", "minimum": 1, "maximum": 12}},
+            "low_months": {"type": "array", "items": {"type": "integer", "minimum": 1, "maximum": 12}}
+          }
+        }
+      },
+      "description": "Purchase pattern analysis."
+    },
+    "complementary_products": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "product_id": {"type": "string"},
+          "title": {"type": "string"},
+          "affinity_score": {"type": "number", "minimum": 0, "maximum": 1},
+          "relationship": {"type": "string", "enum": ["frequently_bought_together", "similar", "accessory", "upgrade", "alternative"]}
+        }
+      },
+      "description": "Related products based on purchase behavior."
+    },
+    "price_sensitivity": {
+      "type": "object",
+      "properties": {
+        "elasticity": {
+          "type": "string",
+          "enum": ["low", "moderate", "high"],
+          "description": "Price elasticity indicator."
+        },
+        "discount_responsiveness": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "How much discounts increase conversions."
+        },
+        "optimal_price_range": {
+          "type": "object",
+          "properties": {
+            "min": {"type": "integer"},
+            "max": {"type": "integer"}
+          }
+        }
+      },
+      "description": "Price sensitivity signals."
+    },
+    "consideration_signals": {
+      "type": "object",
+      "properties": {
+        "avg_consideration_time_hours": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Average time from first view to purchase."
+        },
+        "avg_page_views_before_purchase": {
+          "type": "number",
+          "minimum": 0
+        },
+        "comparison_frequency": {
+          "type": "string",
+          "enum": ["low", "moderate", "high"],
+          "description": "How often compared to other products."
+        },
+        "common_comparison_products": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      },
+      "description": "Purchase consideration signals."
+    },
+    "use_cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "use_case": {"type": "string"},
+          "percentage": {"type": "number", "minimum": 0, "maximum": 100}
+        }
+      },
+      "description": "Common use cases derived from customer feedback."
+    }
+  }
+}

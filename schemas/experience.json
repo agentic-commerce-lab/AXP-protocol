@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/experience.json",
+  "name": "dev.axp.experience",
+  "version": "2026-01-13",
+  "title": "Experience",
+  "description": "Embedded experience definition for sandboxed merchant-provided interactive content in agentic interfaces.",
+  "type": "object",
+  "required": ["axp", "id", "type", "sandbox_policy", "entry_point"],
+  "additionalProperties": true,
+  "properties": {
+    "axp": {
+      "$ref": "axp.json#/$defs/response_experience",
+      "axp_request": "omit"
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique experience identifier."
+    },
+    "type": {
+      "type": "string",
+      "enum": ["viewer_3d", "configurator", "ar", "video", "virtual_try_on", "size_finder", "comparison", "custom"],
+      "description": "Type of embedded experience."
+    },
+    "title": {
+      "type": "string",
+      "description": "Experience title for display."
+    },
+    "description": {
+      "type": "string",
+      "description": "Experience description."
+    },
+    "product_id": {
+      "type": "string",
+      "description": "Associated product ID."
+    },
+    "sandbox_policy": {
+      "$ref": "types/sandbox_policy.json",
+      "description": "Security policy for this experience."
+    },
+    "entry_point": {
+      "$ref": "types/experience_entry_point.json",
+      "description": "How to load and initialize the experience."
+    },
+    "dimensions": {
+      "type": "object",
+      "properties": {
+        "min_width": {"type": "integer", "minimum": 1},
+        "min_height": {"type": "integer", "minimum": 1},
+        "preferred_width": {"type": "integer", "minimum": 1},
+        "preferred_height": {"type": "integer", "minimum": 1},
+        "max_width": {"type": "integer", "minimum": 1},
+        "max_height": {"type": "integer", "minimum": 1},
+        "aspect_ratio": {"type": "string", "pattern": "^\\d+:\\d+$"},
+        "responsive": {"type": "boolean"}
+      },
+      "description": "Display dimension requirements."
+    },
+    "capabilities_required": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["webgl", "webgl2", "webxr", "camera", "microphone", "geolocation", "accelerometer", "gyroscope", "storage"]
+      },
+      "description": "Browser/device capabilities required."
+    },
+    "fallback": {
+      "type": "object",
+      "properties": {
+        "type": {"type": "string", "enum": ["image", "video", "link", "message"]},
+        "content": {"type": "string"},
+        "url": {"type": "string", "format": "uri"}
+      },
+      "description": "Fallback when experience cannot be loaded."
+    },
+    "loading": {
+      "type": "object",
+      "properties": {
+        "estimated_load_time_ms": {"type": "integer", "minimum": 0},
+        "bundle_size_kb": {"type": "integer", "minimum": 1},
+        "progressive": {"type": "boolean"},
+        "placeholder_url": {"type": "string", "format": "uri"}
+      },
+      "description": "Loading characteristics."
+    },
+    "interaction": {
+      "$ref": "types/experience_interaction.json",
+      "description": "Interaction model and callbacks."
+    },
+    "analytics": {
+      "type": "object",
+      "properties": {
+        "tracking_enabled": {"type": "boolean"},
+        "events_reported": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      },
+      "description": "Analytics configuration."
+    },
+    "localization": {
+      "type": "object",
+      "properties": {
+        "supported_locales": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "default_locale": {"type": "string"}
+      },
+      "description": "Localization support."
+    },
+    "accessibility": {
+      "type": "object",
+      "properties": {
+        "wcag_level": {"type": "string", "enum": ["A", "AA", "AAA"]},
+        "keyboard_navigable": {"type": "boolean"},
+        "screen_reader_compatible": {"type": "boolean"},
+        "reduced_motion_support": {"type": "boolean"},
+        "high_contrast_support": {"type": "boolean"}
+      },
+      "description": "Accessibility features."
+    },
+    "version": {
+      "type": "string",
+      "description": "Experience version."
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp."
+    }
+  }
+}

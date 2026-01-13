@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/price.json",
+  "title": "Price",
+  "description": "Price information with support for tiered and contextual pricing.",
+  "type": "object",
+  "required": ["amount"],
+  "properties": {
+    "amount": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Price in minor currency units (cents)."
+    },
+    "formatted": {
+      "type": "string",
+      "description": "Formatted price string for display."
+    },
+    "tiers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["min_quantity", "amount"],
+        "properties": {
+          "min_quantity": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Minimum quantity for this price tier."
+          },
+          "amount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Price per unit at this tier."
+          }
+        }
+      },
+      "description": "Tiered pricing based on quantity."
+    },
+    "valid_from": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Price validity start (RFC 3339)."
+    },
+    "valid_until": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Price validity end (RFC 3339)."
+    },
+    "price_type": {
+      "type": "string",
+      "enum": ["fixed", "starting_at", "per_unit", "negotiable", "call_for_price"],
+      "description": "Type of pricing model."
+    }
+  }
+}

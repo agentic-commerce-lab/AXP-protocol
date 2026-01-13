@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/security.json",
+  "title": "AXP Security",
+  "description": "Security schemas for AXP. AXP uses the same security patterns as UCP: ES256 signatures, JWK public keys, detached JWS (RFC 7797), and standard JWT.",
+
+  "$defs": {
+    "signing_key": {
+      "title": "Signing Key (JWK)",
+      "description": "Public key for signature verification in JWK format. Same format as UCP signing_keys.",
+      "$ref": "https://ucp.dev/schemas/discovery/profile.json#/properties/signing_keys/items"
+    },
+
+    "signing_keys": {
+      "title": "Signing Keys Array",
+      "description": "Array of public keys for signature verification.",
+      "type": "array",
+      "items": {"$ref": "#/$defs/signing_key"}
+    },
+
+    "request_signature": {
+      "title": "Request Signature",
+      "description": "Detached JWS signature for request/response signing (RFC 7797). Format: base64url(header)..base64url(signature). Uses ES256 algorithm (ECDSA P-256 + SHA-256).",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+\\.\\.[A-Za-z0-9_-]+$"
+    },
+
+    "jwt": {
+      "title": "JWT Token",
+      "description": "Standard JWT token using ES256 algorithm.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
+    },
+
+    "signature_header": {
+      "title": "Signature Header",
+      "description": "HTTP header for request/response signatures.",
+      "type": "object",
+      "required": ["alg", "kid"],
+      "properties": {
+        "alg": {
+          "type": "string",
+          "enum": ["ES256", "ES384", "ES512"],
+          "description": "Signing algorithm. ES256 (P-256) is required for UCP/AXP compatibility."
+        },
+        "typ": {
+          "type": "string",
+          "const": "JWT"
+        },
+        "kid": {
+          "type": "string",
+          "description": "Key ID referencing a key in the signer's signing_keys array."
+        }
+      }
+    },
+
+    "experience_signature": {
+      "title": "Experience Content Signature",
+      "description": "Signature for embedded experience content to ensure integrity.",
+      "type": "object",
+      "required": ["signature", "signed_at", "algorithm"],
+      "properties": {
+        "signature": {
+          "$ref": "#/$defs/request_signature",
+          "description": "Detached JWS signature over the experience bundle hash."
+        },
+        "signed_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the content was signed."
+        },
+        "algorithm": {
+          "type": "string",
+          "enum": ["ES256"],
+          "description": "Signature algorithm."
+        },
+        "content_hash": {
+          "type": "string",
+          "description": "SHA-256 hash of the experience bundle (base64url encoded)."
+        },
+        "kid": {
+          "type": "string",
+          "description": "Key ID used for signing."
+        }
+      }
+    },
+
+    "agent_header": {
+      "title": "AXP-Agent Header",
+      "description": "Agent identification header for AXP requests. Compatible with UCP-Agent header format.",
+      "type": "object",
+      "required": ["profile"],
+      "properties": {
+        "profile": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to the agent's discovery profile."
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Capabilities the agent wants to negotiate."
+        }
+      }
+    },
+
+    "authorization": {
+      "title": "Authorization Context",
+      "description": "Authorization context for AXP requests, compatible with UCP's identity linking.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["bearer", "identity_link", "api_key"],
+          "description": "Authorization type."
+        },
+        "token": {
+          "type": "string",
+          "description": "Authorization token (JWT for bearer, link token for identity_link)."
+        },
+        "scope": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Authorized scopes."
+        },
+        "identity_link_ref": {
+          "type": "string",
+          "description": "Reference to UCP identity link if using linked identity."
+        }
+      }
+    }
+  }
+}

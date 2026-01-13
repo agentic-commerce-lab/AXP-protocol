@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/variant_item.json",
+  "title": "Variant Item",
+  "description": "Individual product variant.",
+  "type": "object",
+  "required": ["id", "dimension_values", "price", "availability"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique variant identifier."
+    },
+    "sku": {
+      "type": "string",
+      "description": "Variant SKU."
+    },
+    "gtin": {
+      "type": "string",
+      "description": "Variant-specific GTIN."
+    },
+    "dimension_values": {
+      "type": "object",
+      "description": "Map of dimension code to value code.",
+      "additionalProperties": {"type": "string"}
+    },
+    "title": {
+      "type": "string",
+      "description": "Variant-specific title override."
+    },
+    "price": {
+      "$ref": "price.json",
+      "description": "Variant price."
+    },
+    "compare_at_price": {
+      "$ref": "price.json",
+      "description": "Variant original price before discount."
+    },
+    "availability": {
+      "$ref": "availability.json",
+      "description": "Variant availability."
+    },
+    "media": {
+      "type": "array",
+      "items": {"$ref": "media.json"},
+      "description": "Variant-specific media."
+    },
+    "attributes": {
+      "type": "array",
+      "items": {"$ref": "attribute.json"},
+      "description": "Variant-specific attributes."
+    },
+    "weight": {
+      "type": "object",
+      "properties": {
+        "value": {"type": "number", "minimum": 0},
+        "unit": {"type": "string", "enum": ["g", "kg", "oz", "lb"]}
+      },
+      "description": "Variant weight for shipping calculations."
+    },
+    "dimensions": {
+      "type": "object",
+      "properties": {
+        "length": {"type": "number", "minimum": 0},
+        "width": {"type": "number", "minimum": 0},
+        "height": {"type": "number", "minimum": 0},
+        "unit": {"type": "string", "enum": ["mm", "cm", "m", "in", "ft"]}
+      },
+      "description": "Variant physical dimensions."
+    }
+  }
+}

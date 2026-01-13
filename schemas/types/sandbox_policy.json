@@ -1,0 +1,252 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/sandbox_policy.json",
+  "title": "Sandbox Policy",
+  "description": "Security sandbox policy for embedded experiences.",
+  "type": "object",
+  "required": ["isolation_level"],
+  "properties": {
+    "isolation_level": {
+      "type": "string",
+      "enum": ["strict", "standard", "relaxed"],
+      "description": "Sandbox isolation level. Strict: maximum isolation, no external resources. Standard: limited external resources. Relaxed: merchant-trusted with more permissions."
+    },
+    "permissions": {
+      "type": "object",
+      "properties": {
+        "allow_scripts": {
+          "type": "boolean",
+          "default": true,
+          "description": "Allow JavaScript execution."
+        },
+        "allow_same_origin": {
+          "type": "boolean",
+          "default": false,
+          "description": "Allow same-origin access."
+        },
+        "allow_forms": {
+          "type": "boolean",
+          "default": false,
+          "description": "Allow form submission."
+        },
+        "allow_popups": {
+          "type": "boolean",
+          "default": false,
+          "description": "Allow popup windows."
+        },
+        "allow_modals": {
+          "type": "boolean",
+          "default": false,
+          "description": "Allow modal dialogs."
+        },
+        "allow_orientation_lock": {
+          "type": "boolean",
+          "default": false,
+          "description": "Allow screen orientation lock."
+        },
+        "allow_pointer_lock": {
+          "type": "boolean",
+          "default": false,
+          "description": "Allow pointer lock API."
+        },
+        "allow_presentation": {
+          "type": "boolean",
+          "default": false,
+          "description": "Allow presentation API."
+        },
+        "allow_downloads": {
+          "type": "boolean",
+          "default": false,
+          "description": "Allow file downloads."
+        }
+      },
+      "description": "Granular permission settings."
+    },
+    "content_security_policy": {
+      "type": "object",
+      "properties": {
+        "default_src": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Default source whitelist."
+        },
+        "script_src": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Script source whitelist."
+        },
+        "style_src": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Style source whitelist."
+        },
+        "img_src": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Image source whitelist."
+        },
+        "media_src": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Media source whitelist."
+        },
+        "connect_src": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Connection source whitelist (XHR, WebSocket, etc.)."
+        },
+        "font_src": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Font source whitelist."
+        },
+        "frame_src": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Frame source whitelist."
+        },
+        "worker_src": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Worker source whitelist."
+        }
+      },
+      "description": "Content Security Policy directives."
+    },
+    "allowed_apis": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "fetch",
+          "xhr",
+          "websocket",
+          "webgl",
+          "webgl2",
+          "webxr",
+          "webrtc",
+          "canvas",
+          "audio",
+          "video",
+          "geolocation",
+          "camera",
+          "microphone",
+          "storage_local",
+          "storage_session",
+          "indexeddb",
+          "clipboard_read",
+          "clipboard_write",
+          "notifications",
+          "vibration",
+          "device_orientation",
+          "device_motion"
+        ]
+      },
+      "description": "Browser APIs the experience is allowed to use."
+    },
+    "network_restrictions": {
+      "type": "object",
+      "properties": {
+        "allowed_domains": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Domains the experience can communicate with."
+        },
+        "blocked_domains": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Explicitly blocked domains."
+        },
+        "allow_cross_origin": {
+          "type": "boolean",
+          "default": false
+        },
+        "require_https": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "description": "Network access restrictions."
+    },
+    "resource_limits": {
+      "type": "object",
+      "properties": {
+        "max_memory_mb": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum memory usage in MB."
+        },
+        "max_cpu_percentage": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum CPU usage percentage."
+        },
+        "max_network_requests_per_minute": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Rate limit for network requests."
+        },
+        "max_storage_mb": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Maximum local storage usage."
+        },
+        "execution_timeout_ms": {
+          "type": "integer",
+          "minimum": 1000,
+          "description": "Maximum execution time before termination."
+        }
+      },
+      "description": "Resource usage limits."
+    },
+    "data_handling": {
+      "type": "object",
+      "properties": {
+        "can_access_product_data": {
+          "type": "boolean",
+          "default": true
+        },
+        "can_access_user_preferences": {
+          "type": "boolean",
+          "default": false
+        },
+        "can_persist_data": {
+          "type": "boolean",
+          "default": false
+        },
+        "data_retention_hours": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pii_handling": {
+          "type": "string",
+          "enum": ["none", "anonymized", "with_consent"]
+        }
+      },
+      "description": "Data access and handling restrictions."
+    },
+    "audit": {
+      "type": "object",
+      "properties": {
+        "log_api_calls": {
+          "type": "boolean",
+          "default": false
+        },
+        "log_network_requests": {
+          "type": "boolean",
+          "default": false
+        },
+        "log_errors": {
+          "type": "boolean",
+          "default": true
+        },
+        "report_violations": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "description": "Audit and logging settings."
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/quality_signals.json",
+  "title": "Quality Signals",
+  "description": "Embedded quality signals for inline product data.",
+  "type": "object",
+  "properties": {
+    "rating_summary": {
+      "type": "object",
+      "properties": {
+        "rating": {"type": "number", "minimum": 0, "maximum": 5},
+        "count": {"type": "integer", "minimum": 0},
+        "recommendation_percentage": {"type": "integer", "minimum": 0, "maximum": 100}
+      },
+      "description": "Quick rating summary."
+    },
+    "return_indicator": {
+      "type": "string",
+      "enum": ["very_low", "low", "average", "high"],
+      "description": "Return rate indicator."
+    },
+    "trust_badges": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["verified_seller", "authentic_product", "top_rated", "fast_shipping", "easy_returns", "secure_checkout"]
+      },
+      "description": "Applicable trust badges."
+    },
+    "quality_tier": {
+      "type": "string",
+      "enum": ["premium", "standard", "value", "unrated"],
+      "description": "Overall quality tier."
+    },
+    "confidence_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Confidence in quality signals."
+    },
+    "quality_data_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to fetch full quality data."
+    }
+  }
+}

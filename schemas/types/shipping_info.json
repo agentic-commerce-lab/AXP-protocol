@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/shipping_info.json",
+  "title": "Shipping Info",
+  "description": "Shipping information for a product.",
+  "type": "object",
+  "properties": {
+    "ships_from": {
+      "type": "string",
+      "description": "Shipping origin location."
+    },
+    "ships_from_country": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$",
+      "description": "Shipping origin country code."
+    },
+    "free_shipping": {
+      "type": "boolean",
+      "description": "Whether free shipping is available."
+    },
+    "free_shipping_threshold": {
+      "$ref": "price.json",
+      "description": "Order value for free shipping."
+    },
+    "estimated_delivery": {
+      "type": "object",
+      "properties": {
+        "min_days": {"type": "integer", "minimum": 0},
+        "max_days": {"type": "integer", "minimum": 0},
+        "message": {"type": "string"}
+      },
+      "description": "Estimated delivery time."
+    },
+    "shipping_options": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "price": {"$ref": "price.json"},
+          "min_days": {"type": "integer"},
+          "max_days": {"type": "integer"},
+          "carrier": {"type": "string"}
+        }
+      },
+      "description": "Available shipping options."
+    },
+    "restrictions": {
+      "type": "object",
+      "properties": {
+        "excluded_countries": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "excluded_regions": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "hazmat": {"type": "boolean"},
+        "oversized": {"type": "boolean"}
+      },
+      "description": "Shipping restrictions."
+    },
+    "pickup_available": {
+      "type": "boolean",
+      "description": "Whether store pickup is available."
+    }
+  }
+}

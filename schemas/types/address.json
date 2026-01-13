@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/address.json",
+  "title": "Address",
+  "description": "Physical address.",
+  "type": "object",
+  "properties": {
+    "street_address": {
+      "type": "string",
+      "description": "Street address including number."
+    },
+    "street_address_2": {
+      "type": "string",
+      "description": "Additional address line."
+    },
+    "city": {
+      "type": "string",
+      "description": "City or locality."
+    },
+    "region": {
+      "type": "string",
+      "description": "State, province, or region."
+    },
+    "postal_code": {
+      "type": "string",
+      "description": "Postal or ZIP code."
+    },
+    "country": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$",
+      "description": "ISO 3166-1 alpha-2 country code."
+    }
+  }
+}

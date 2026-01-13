@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/configurator_option.json",
+  "title": "Configurator Option",
+  "description": "Single option within a configurator step.",
+  "type": "object",
+  "required": ["id", "label"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Option identifier."
+    },
+    "label": {
+      "type": "string",
+      "description": "Option label for display."
+    },
+    "description": {
+      "type": "string",
+      "description": "Option description."
+    },
+    "price_adjustment": {
+      "$ref": "price.json",
+      "description": "Price adjustment for selecting this option."
+    },
+    "price_adjustment_type": {
+      "type": "string",
+      "enum": ["add", "subtract", "multiply", "replace"],
+      "description": "How the price adjustment is applied."
+    },
+    "available": {
+      "type": "boolean",
+      "description": "Whether this option is currently available."
+    },
+    "default": {
+      "type": "boolean",
+      "description": "Whether this is the default selection."
+    },
+    "visual": {
+      "type": "object",
+      "properties": {
+        "type": {"type": "string", "enum": ["color", "image", "icon", "material"]},
+        "value": {"type": "string"},
+        "preview_url": {"type": "string", "format": "uri"}
+      },
+      "description": "Visual representation of the option."
+    },
+    "lead_time_adjustment": {
+      "type": "object",
+      "properties": {
+        "days": {"type": "integer"},
+        "type": {"type": "string", "enum": ["add", "replace"]}
+      },
+      "description": "Lead time adjustment for this option."
+    },
+    "sku_suffix": {
+      "type": "string",
+      "description": "SKU suffix when this option is selected."
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Additional option metadata."
+    }
+  }
+}

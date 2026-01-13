@@ -1,0 +1,190 @@
+{
+  "$schema": "https://ucp.dev/schemas/axp/discovery/profile.json",
+  "_comment": "Example of a unified UCP + AXP discovery profile served at /.well-known/ucp",
+
+  "ucp": {
+    "version": "2026-01-11",
+    "services": {
+      "dev.ucp.shopping.checkout": {
+        "transports": [
+          {
+            "type": "rest",
+            "url": "https://merchant.example.com/api/ucp/checkout-sessions"
+          },
+          {
+            "type": "mcp",
+            "url": "mcp://merchant.example.com/ucp"
+          }
+        ]
+      }
+    },
+    "capabilities": [
+      {
+        "name": "dev.ucp.shopping.checkout",
+        "version": "2026-01-11",
+        "spec": "https://ucp.dev/specification/checkout",
+        "schema": "https://ucp.dev/schemas/shopping/checkout.json"
+      },
+      {
+        "name": "dev.ucp.shopping.fulfillment",
+        "version": "2026-01-11",
+        "extends": "dev.ucp.shopping.checkout",
+        "spec": "https://ucp.dev/specification/fulfillment",
+        "schema": "https://ucp.dev/schemas/shopping/fulfillment.json"
+      }
+    ]
+  },
+
+  "axp": {
+    "version": "2026-01-13",
+    "services": {
+      "dev.axp.product_data": {
+        "transports": [
+          {
+            "type": "rest",
+            "url": "https://merchant.example.com/api/axp/products"
+          },
+          {
+            "type": "mcp",
+            "url": "mcp://merchant.example.com/axp"
+          }
+        ]
+      },
+      "dev.axp.quality_data": {
+        "transports": [
+          {
+            "type": "rest",
+            "url": "https://merchant.example.com/api/axp/quality"
+          }
+        ]
+      },
+      "dev.axp.experience_embedding": {
+        "transports": [
+          {
+            "type": "rest",
+            "url": "https://merchant.example.com/api/axp/experiences"
+          }
+        ]
+      }
+    },
+    "capabilities": [
+      {
+        "name": "dev.axp.product_data",
+        "version": "2026-01-13",
+        "spec": "https://ucp.dev/axp/specification/product-data",
+        "schema": "https://ucp.dev/schemas/axp/product.json",
+        "config": {
+          "supported_product_types": ["simple", "variant", "configurable", "subscription"],
+          "supports_real_time_inventory": true,
+          "supports_real_time_pricing": true
+        }
+      },
+      {
+        "name": "dev.axp.product_data.variants",
+        "version": "2026-01-13",
+        "extends": "dev.axp.product_data",
+        "spec": "https://ucp.dev/axp/specification/variants",
+        "schema": "https://ucp.dev/schemas/axp/types/variants.json",
+        "config": {
+          "max_variants_per_product": 1000
+        }
+      },
+      {
+        "name": "dev.axp.product_data.configurator",
+        "version": "2026-01-13",
+        "extends": "dev.axp.product_data",
+        "spec": "https://ucp.dev/axp/specification/configurator",
+        "schema": "https://ucp.dev/schemas/axp/types/configurator.json"
+      },
+      {
+        "name": "dev.axp.quality_data",
+        "version": "2026-01-13",
+        "spec": "https://ucp.dev/axp/specification/quality-data",
+        "schema": "https://ucp.dev/schemas/axp/quality_data.json",
+        "config": {
+          "review_sources": ["verified_purchase", "syndicated"],
+          "return_data_granularity": "product",
+          "data_freshness_guarantee_hours": 24
+        }
+      },
+      {
+        "name": "dev.axp.quality_data.reviews",
+        "version": "2026-01-13",
+        "extends": "dev.axp.quality_data",
+        "spec": "https://ucp.dev/axp/specification/reviews",
+        "schema": "https://ucp.dev/schemas/axp/types/reviews.json"
+      },
+      {
+        "name": "dev.axp.quality_data.trust",
+        "version": "2026-01-13",
+        "extends": "dev.axp.quality_data",
+        "spec": "https://ucp.dev/axp/specification/trust",
+        "schema": "https://ucp.dev/schemas/axp/types/merchant_trust.json"
+      },
+      {
+        "name": "dev.axp.experience_embedding",
+        "version": "2026-01-13",
+        "spec": "https://ucp.dev/axp/specification/experience-embedding",
+        "schema": "https://ucp.dev/schemas/axp/experience.json",
+        "config": {
+          "supported_experience_types": ["viewer_3d", "configurator", "ar"],
+          "max_experience_size_kb": 5000,
+          "content_signing_required": true
+        }
+      },
+      {
+        "name": "dev.axp.experience_embedding.viewer_3d",
+        "version": "2026-01-13",
+        "extends": "dev.axp.experience_embedding",
+        "spec": "https://ucp.dev/axp/specification/viewer-3d",
+        "schema": "https://ucp.dev/schemas/axp/experience.json"
+      }
+    ]
+  },
+
+  "signing_keys": [
+    {
+      "kid": "merchant-key-2026-01",
+      "kty": "EC",
+      "crv": "P-256",
+      "x": "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU",
+      "y": "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0",
+      "use": "sig",
+      "alg": "ES256"
+    }
+  ],
+
+  "payment": {
+    "handlers": [
+      {
+        "name": "Stripe",
+        "url": "https://merchant.example.com/api/ucp/payment/stripe"
+      }
+    ]
+  },
+
+  "merchant_trust": {
+    "trust_score": {
+      "score": 94,
+      "tier": "gold"
+    },
+    "verification": {
+      "business_verified": true,
+      "address_verified": true
+    }
+  },
+
+  "product_catalog": {
+    "total_products": 15000,
+    "supported_product_types": ["simple", "variant", "configurable", "subscription"],
+    "categories_count": 250,
+    "brands_count": 120
+  },
+
+  "experiences": {
+    "enabled": true,
+    "supported_types": ["viewer_3d", "configurator", "ar"],
+    "total_experiences": 450,
+    "content_signing_enabled": true
+  }
+}

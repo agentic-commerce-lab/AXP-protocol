@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/product_trust.json",
+  "title": "Product Trust",
+  "description": "Product-specific trust and authenticity signals.",
+  "type": "object",
+  "properties": {
+    "authenticity": {
+      "type": "object",
+      "properties": {
+        "verified_authentic": {
+          "type": "boolean",
+          "description": "Whether authenticity is verified."
+        },
+        "verification_method": {
+          "type": "string",
+          "enum": ["manufacturer_direct", "authorized_dealer", "serial_verification", "certificate", "blockchain"],
+          "description": "How authenticity was verified."
+        },
+        "verification_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "certificate_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "serial_number_visible": {
+          "type": "boolean"
+        }
+      },
+      "description": "Product authenticity verification."
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "supply_chain_transparency": {
+          "type": "string",
+          "enum": ["full", "partial", "none"]
+        },
+        "country_of_origin": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code."
+        },
+        "manufacturing_location": {
+          "type": "string"
+        },
+        "authorized_seller": {
+          "type": "boolean"
+        },
+        "direct_from_brand": {
+          "type": "boolean"
+        }
+      },
+      "description": "Product source information."
+    },
+    "safety_compliance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "standard": {
+            "type": "string",
+            "description": "Safety standard name (e.g., 'CE', 'UL', 'FCC')."
+          },
+          "certified": {
+            "type": "boolean"
+          },
+          "certificate_number": {
+            "type": "string"
+          },
+          "verification_url": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
+      "description": "Safety certifications and compliance."
+    },
+    "quality_indicators": {
+      "type": "object",
+      "properties": {
+        "quality_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "defect_rate_category": {
+          "type": "string",
+          "enum": ["very_low", "low", "average", "high"]
+        },
+        "warranty_claim_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "longevity_indicator": {
+          "type": "string",
+          "enum": ["excellent", "good", "average", "poor"]
+        }
+      },
+      "description": "Quality indicators from data."
+    },
+    "content_accuracy": {
+      "type": "object",
+      "properties": {
+        "description_accuracy_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "How accurately description matches product."
+        },
+        "image_accuracy_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "How accurately images represent product."
+        },
+        "spec_verification": {
+          "type": "string",
+          "enum": ["verified", "unverified", "discrepancies_found"]
+        },
+        "last_verified": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "description": "Product content accuracy assessment."
+    },
+    "brand_authorization": {
+      "type": "object",
+      "properties": {
+        "authorized_retailer": {
+          "type": "boolean"
+        },
+        "brand_verified": {
+          "type": "boolean"
+        },
+        "authorization_level": {
+          "type": "string",
+          "enum": ["official", "authorized", "authorized_reseller", "gray_market", "unknown"]
+        },
+        "brand_partnership_url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "description": "Brand authorization status."
+    },
+    "recall_status": {
+      "type": "object",
+      "properties": {
+        "recalled": {
+          "type": "boolean"
+        },
+        "recall_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "recall_reason": {
+          "type": "string"
+        },
+        "recall_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "affected_serial_ranges": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      },
+      "description": "Product recall information."
+    }
+  }
+}

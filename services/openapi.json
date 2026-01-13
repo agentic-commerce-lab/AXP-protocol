@@ -1,0 +1,605 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "AXP - Agentic Experience Protocol API",
+    "version": "2026-01-13",
+    "description": "REST API for the Agentic Experience Protocol (AXP). Provides product data, quality signals, and embedded experiences for agentic commerce interfaces. Uses the same security patterns as UCP (ES256 signatures, JWK keys, detached JWS).",
+    "contact": {
+      "name": "AXP Protocol Team",
+      "url": "https://ucp.dev/axp"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://{merchant}/api/axp",
+      "description": "Merchant AXP API endpoint",
+      "variables": {
+        "merchant": {
+          "default": "example.com",
+          "description": "Merchant domain"
+        }
+      }
+    }
+  ],
+  "security": [
+    {"bearerAuth": []},
+    {"apiKey": []}
+  ],
+  "paths": {
+    "/products": {
+      "get": {
+        "operationId": "listProducts",
+        "summary": "List products",
+        "description": "Retrieve a paginated list of products with optional filtering.",
+        "tags": ["Product Data"],
+        "parameters": [
+          {"$ref": "#/components/parameters/AXP-Agent"},
+          {"$ref": "#/components/parameters/limit"},
+          {"$ref": "#/components/parameters/offset"},
+          {"$ref": "#/components/parameters/category"},
+          {"$ref": "#/components/parameters/product_type"},
+          {"$ref": "#/components/parameters/brand"},
+          {"$ref": "#/components/parameters/include_quality"},
+          {"$ref": "#/components/parameters/include_experiences"}
+        ],
+        "responses": {
+          "200": {
+            "description": "Product list",
+            "headers": {
+              "Response-Signature": {"$ref": "#/components/headers/Response-Signature"}
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "products": {
+                      "type": "array",
+                      "items": {"$ref": "../schemas/product.json"}
+                    },
+                    "pagination": {"$ref": "#/components/schemas/Pagination"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{product_id}": {
+      "get": {
+        "operationId": "getProduct",
+        "summary": "Get product details",
+        "description": "Retrieve detailed information about a specific product.",
+        "tags": ["Product Data"],
+        "parameters": [
+          {"$ref": "#/components/parameters/AXP-Agent"},
+          {"$ref": "#/components/parameters/product_id"},
+          {"$ref": "#/components/parameters/include_quality"},
+          {"$ref": "#/components/parameters/include_experiences"},
+          {"$ref": "#/components/parameters/variant_id"}
+        ],
+        "responses": {
+          "200": {
+            "description": "Product details",
+            "headers": {
+              "Response-Signature": {"$ref": "#/components/headers/Response-Signature"}
+            },
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "../schemas/product.json"}
+              }
+            }
+          },
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      }
+    },
+    "/products/{product_id}/variants": {
+      "get": {
+        "operationId": "getProductVariants",
+        "summary": "Get product variants",
+        "description": "Retrieve all variants for a product.",
+        "tags": ["Product Data"],
+        "parameters": [
+          {"$ref": "#/components/parameters/AXP-Agent"},
+          {"$ref": "#/components/parameters/product_id"}
+        ],
+        "responses": {
+          "200": {
+            "description": "Variant list",
+            "headers": {
+              "Response-Signature": {"$ref": "#/components/headers/Response-Signature"}
+            },
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "../schemas/types/variants.json"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{product_id}/configurator": {
+      "get": {
+        "operationId": "getProductConfigurator",
+        "summary": "Get product configurator",
+        "description": "Retrieve configurator definition for a configurable product.",
+        "tags": ["Product Data"],
+        "parameters": [
+          {"$ref": "#/components/parameters/AXP-Agent"},
+          {"$ref": "#/components/parameters/product_id"}
+        ],
+        "responses": {
+          "200": {
+            "description": "Configurator definition",
+            "headers": {
+              "Response-Signature": {"$ref": "#/components/headers/Response-Signature"}
+            },
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "../schemas/types/configurator.json"}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "calculateConfiguration",
+        "summary": "Calculate configuration",
+        "description": "Calculate price and availability for a specific configuration.",
+        "tags": ["Product Data"],
+        "parameters": [
+          {"$ref": "#/components/parameters/AXP-Agent"},
+          {"$ref": "#/components/parameters/product_id"},
+          {"$ref": "#/components/parameters/Request-Signature"}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "selections": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "description": "Map of step ID to selected option ID(s)."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Configuration result",
+            "headers": {
+              "Response-Signature": {"$ref": "#/components/headers/Response-Signature"}
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "valid": {"type": "boolean"},
+                    "price": {"$ref": "../schemas/types/price.json"},
+                    "availability": {"$ref": "../schemas/types/availability.json"},
+                    "lead_time_days": {"type": "integer"},
+                    "warnings": {"type": "array", "items": {"type": "string"}},
+                    "errors": {"type": "array", "items": {"type": "string"}},
+                    "ucp_item": {
+                      "$ref": "https://ucp.dev/schemas/shopping/types/item.json",
+                      "description": "UCP-compatible item for checkout integration."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{product_id}/quality": {
+      "get": {
+        "operationId": "getProductQuality",
+        "summary": "Get product quality data",
+        "description": "Retrieve quality signals, reviews, and trust data for a product.",
+        "tags": ["Quality Data"],
+        "parameters": [
+          {"$ref": "#/components/parameters/AXP-Agent"},
+          {"$ref": "#/components/parameters/product_id"},
+          {
+            "name": "include",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["reviews", "returns", "intent", "trust", "social_proof"]
+              }
+            },
+            "description": "Quality data sections to include."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Quality data",
+            "headers": {
+              "Response-Signature": {"$ref": "#/components/headers/Response-Signature"}
+            },
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "../schemas/quality_data.json"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{product_id}/reviews": {
+      "get": {
+        "operationId": "getProductReviews",
+        "summary": "Get product reviews",
+        "description": "Retrieve paginated reviews for a product.",
+        "tags": ["Quality Data"],
+        "parameters": [
+          {"$ref": "#/components/parameters/AXP-Agent"},
+          {"$ref": "#/components/parameters/product_id"},
+          {"$ref": "#/components/parameters/limit"},
+          {"$ref": "#/components/parameters/offset"},
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["recent", "helpful", "rating_high", "rating_low"]
+            }
+          },
+          {
+            "name": "rating",
+            "in": "query",
+            "schema": {"type": "integer", "minimum": 1, "maximum": 5}
+          },
+          {
+            "name": "verified_only",
+            "in": "query",
+            "schema": {"type": "boolean"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Review list",
+            "headers": {
+              "Response-Signature": {"$ref": "#/components/headers/Response-Signature"}
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "aggregate": {"$ref": "../schemas/types/reviews.json#/properties/aggregate"},
+                    "reviews": {
+                      "type": "array",
+                      "items": {"$ref": "../schemas/types/review_item.json"}
+                    },
+                    "pagination": {"$ref": "#/components/schemas/Pagination"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{product_id}/experiences": {
+      "get": {
+        "operationId": "getProductExperiences",
+        "summary": "Get product experiences",
+        "description": "Retrieve available embedded experiences for a product.",
+        "tags": ["Experience Embedding"],
+        "parameters": [
+          {"$ref": "#/components/parameters/AXP-Agent"},
+          {"$ref": "#/components/parameters/product_id"},
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["viewer_3d", "configurator", "ar", "video", "virtual_try_on", "size_finder", "custom"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Experience list",
+            "headers": {
+              "Response-Signature": {"$ref": "#/components/headers/Response-Signature"}
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "experiences": {
+                      "type": "array",
+                      "items": {"$ref": "../schemas/types/embedded_experience.json"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/experiences/{experience_id}": {
+      "get": {
+        "operationId": "getExperience",
+        "summary": "Get experience details",
+        "description": "Retrieve full experience definition including sandbox policy and entry point.",
+        "tags": ["Experience Embedding"],
+        "parameters": [
+          {"$ref": "#/components/parameters/AXP-Agent"},
+          {
+            "name": "experience_id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Experience definition",
+            "headers": {
+              "Response-Signature": {"$ref": "#/components/headers/Response-Signature"},
+              "Content-Signature": {"$ref": "#/components/headers/Content-Signature"}
+            },
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "../schemas/experience.json"}
+              }
+            }
+          },
+          "404": {"$ref": "#/components/responses/NotFound"}
+        }
+      }
+    },
+    "/merchant/trust": {
+      "get": {
+        "operationId": "getMerchantTrust",
+        "summary": "Get merchant trust data",
+        "description": "Retrieve trust and reputation information about the merchant.",
+        "tags": ["Quality Data"],
+        "parameters": [
+          {"$ref": "#/components/parameters/AXP-Agent"}
+        ],
+        "responses": {
+          "200": {
+            "description": "Merchant trust data",
+            "headers": {
+              "Response-Signature": {"$ref": "#/components/headers/Response-Signature"}
+            },
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "../schemas/types/merchant_trust.json"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{product_id}/ucp-item": {
+      "get": {
+        "operationId": "getUcpItem",
+        "summary": "Get UCP-compatible item",
+        "description": "Retrieve a UCP-compatible item representation of the product for use in UCP checkout sessions.",
+        "tags": ["UCP Integration"],
+        "parameters": [
+          {"$ref": "#/components/parameters/AXP-Agent"},
+          {"$ref": "#/components/parameters/product_id"},
+          {"$ref": "#/components/parameters/variant_id"},
+          {
+            "name": "configuration",
+            "in": "query",
+            "schema": {"type": "string"},
+            "description": "Base64-encoded configuration selections for configurable products."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "UCP-compatible item",
+            "headers": {
+              "Response-Signature": {"$ref": "#/components/headers/Response-Signature"}
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {"$ref": "https://ucp.dev/schemas/shopping/types/item.json"},
+                    {
+                      "type": "object",
+                      "properties": {
+                        "axp_product_id": {
+                          "type": "string",
+                          "description": "Original AXP product ID for reference."
+                        },
+                        "axp_variant_id": {
+                          "type": "string",
+                          "description": "AXP variant ID if applicable."
+                        },
+                        "axp_configuration": {
+                          "type": "object",
+                          "description": "Configuration selections if applicable."
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT token using ES256 algorithm (same as UCP)."
+      },
+      "apiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-AXP-API-Key"
+      }
+    },
+    "headers": {
+      "Response-Signature": {
+        "description": "Detached JWS signature (RFC 7797) for response verification. Format: base64url(header)..base64url(signature). Uses ES256 algorithm. Same format as UCP Request-Signature.",
+        "schema": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+\\.\\.[A-Za-z0-9_-]+$"
+        }
+      },
+      "Content-Signature": {
+        "description": "Signature over experience content hash for integrity verification.",
+        "schema": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+\\.\\.[A-Za-z0-9_-]+$"
+        }
+      }
+    },
+    "parameters": {
+      "AXP-Agent": {
+        "name": "AXP-Agent",
+        "in": "header",
+        "description": "Agent identification header. Format: profile=\"https://agent.example/profile\". Same pattern as UCP-Agent header.",
+        "schema": {
+          "type": "string",
+          "pattern": "^profile=\"https?://[^\"]+\"(;\\s*[a-z_]+=\"[^\"]*\")*$"
+        },
+        "example": "profile=\"https://platform.example/profile\""
+      },
+      "Request-Signature": {
+        "name": "Request-Signature",
+        "in": "header",
+        "description": "Detached JWS signature for request body verification (RFC 7797). Same format as UCP.",
+        "schema": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+\\.\\.[A-Za-z0-9_-]+$"
+        }
+      },
+      "product_id": {
+        "name": "product_id",
+        "in": "path",
+        "required": true,
+        "schema": {"type": "string"},
+        "description": "Product identifier."
+      },
+      "variant_id": {
+        "name": "variant_id",
+        "in": "query",
+        "schema": {"type": "string"},
+        "description": "Specific variant to return."
+      },
+      "limit": {
+        "name": "limit",
+        "in": "query",
+        "schema": {"type": "integer", "minimum": 1, "maximum": 100, "default": 20},
+        "description": "Maximum items to return."
+      },
+      "offset": {
+        "name": "offset",
+        "in": "query",
+        "schema": {"type": "integer", "minimum": 0, "default": 0},
+        "description": "Offset for pagination."
+      },
+      "category": {
+        "name": "category",
+        "in": "query",
+        "schema": {"type": "string"},
+        "description": "Filter by category ID."
+      },
+      "product_type": {
+        "name": "product_type",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "enum": ["simple", "variant", "configurable", "bundle", "event", "subscription", "digital", "service"]
+        },
+        "description": "Filter by product type."
+      },
+      "brand": {
+        "name": "brand",
+        "in": "query",
+        "schema": {"type": "string"},
+        "description": "Filter by brand."
+      },
+      "include_quality": {
+        "name": "include_quality",
+        "in": "query",
+        "schema": {"type": "boolean", "default": false},
+        "description": "Include quality signals in response."
+      },
+      "include_experiences": {
+        "name": "include_experiences",
+        "in": "query",
+        "schema": {"type": "boolean", "default": false},
+        "description": "Include available experiences in response."
+      }
+    },
+    "schemas": {
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "total": {"type": "integer"},
+          "limit": {"type": "integer"},
+          "offset": {"type": "integer"},
+          "has_more": {"type": "boolean"}
+        }
+      }
+    },
+    "responses": {
+      "NotFound": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "error": {"type": "string"},
+                "message": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Product Data",
+      "description": "Product information, variants, and configurators."
+    },
+    {
+      "name": "Quality Data",
+      "description": "Reviews, returns, trust signals, and intent data."
+    },
+    {
+      "name": "Experience Embedding",
+      "description": "Sandboxed embedded experiences for agentic interfaces."
+    },
+    {
+      "name": "UCP Integration",
+      "description": "Endpoints for UCP checkout integration."
+    }
+  ]
+}

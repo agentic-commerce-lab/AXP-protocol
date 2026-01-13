@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/variants.json",
+  "title": "Variants",
+  "description": "Product variant configuration and variant list.",
+  "type": "object",
+  "required": ["dimensions", "items"],
+  "properties": {
+    "dimensions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "label", "values"],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Dimension code (e.g., 'color', 'size')."
+          },
+          "label": {
+            "type": "string",
+            "description": "Human-readable dimension label."
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["code", "label"],
+              "properties": {
+                "code": {"type": "string"},
+                "label": {"type": "string"},
+                "visual": {
+                  "type": "object",
+                  "properties": {
+                    "type": {"type": "string", "enum": ["color", "image", "icon"]},
+                    "value": {"type": "string"}
+                  }
+                },
+                "available": {"type": "boolean", "description": "Whether any variant with this value is available."}
+              }
+            },
+            "description": "Available values for this dimension."
+          },
+          "display_type": {
+            "type": "string",
+            "enum": ["dropdown", "swatch", "buttons", "images"],
+            "description": "Recommended UI display type."
+          }
+        }
+      },
+      "description": "Variant dimensions (axes of variation)."
+    },
+    "items": {
+      "type": "array",
+      "items": {"$ref": "variant_item.json"},
+      "description": "List of all variant items."
+    },
+    "selection_matrix": {
+      "type": "object",
+      "description": "Precomputed availability matrix for fast UI updates.",
+      "additionalProperties": true
+    },
+    "default_variant_id": {
+      "type": "string",
+      "description": "ID of the default variant to display."
+    }
+  }
+}

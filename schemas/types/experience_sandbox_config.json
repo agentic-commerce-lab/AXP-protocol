@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/experience_sandbox_config.json",
+  "title": "Experience Sandbox Config",
+  "description": "Global sandbox configuration for merchant's embedded experiences.",
+  "type": "object",
+  "properties": {
+    "default_policy": {
+      "$ref": "sandbox_policy.json",
+      "description": "Default sandbox policy for all experiences."
+    },
+    "trusted_domains": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Domains trusted for loading experience resources."
+    },
+    "cdn_endpoints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "url": {"type": "string", "format": "uri"},
+          "region": {"type": "string"},
+          "priority": {"type": "integer", "minimum": 0}
+        }
+      },
+      "description": "CDN endpoints for experience assets."
+    },
+    "signing": {
+      "type": "object",
+      "properties": {
+        "required": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether experience bundles must be signed."
+        },
+        "public_key_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to fetch public key for verification."
+        },
+        "algorithm": {
+          "type": "string",
+          "enum": ["RS256", "ES256"],
+          "description": "Signature algorithm."
+        }
+      },
+      "description": "Experience bundle signing configuration."
+    },
+    "versioning": {
+      "type": "object",
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "enum": ["semver", "date", "hash"],
+          "description": "Versioning strategy."
+        },
+        "cache_duration_hours": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "How long to cache experience bundles."
+        }
+      },
+      "description": "Versioning and caching strategy."
+    },
+    "monitoring": {
+      "type": "object",
+      "properties": {
+        "error_reporting_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL for error reporting."
+        },
+        "performance_tracking": {
+          "type": "boolean",
+          "default": false
+        },
+        "usage_analytics": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "description": "Monitoring and analytics configuration."
+    },
+    "support": {
+      "type": "object",
+      "properties": {
+        "documentation_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "support_email": {
+          "type": "string",
+          "format": "email"
+        },
+        "sdk_url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "description": "Developer support information."
+    }
+  }
+}

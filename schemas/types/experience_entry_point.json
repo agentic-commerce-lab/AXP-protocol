@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/experience_entry_point.json",
+  "title": "Experience Entry Point",
+  "description": "Entry point configuration for loading embedded experiences.",
+  "type": "object",
+  "required": ["type"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": ["iframe", "web_component", "script", "wasm"],
+      "description": "Entry point type."
+    },
+    "iframe": {
+      "type": "object",
+      "properties": {
+        "src": {
+          "type": "string",
+          "format": "uri",
+          "description": "iframe source URL."
+        },
+        "srcdoc": {
+          "type": "string",
+          "description": "Inline HTML content for the iframe."
+        },
+        "sandbox_attributes": {
+          "type": "string",
+          "description": "Additional sandbox attribute values."
+        }
+      },
+      "description": "iframe entry point configuration."
+    },
+    "web_component": {
+      "type": "object",
+      "properties": {
+        "tag_name": {
+          "type": "string",
+          "pattern": "^[a-z]+-[a-z0-9-]+$",
+          "description": "Custom element tag name."
+        },
+        "module_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "ES module URL for the web component."
+        },
+        "attributes": {
+          "type": "object",
+          "additionalProperties": {"type": "string"},
+          "description": "Initial attributes to set on the component."
+        },
+        "shadow_dom": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether the component uses Shadow DOM."
+        }
+      },
+      "description": "Web Component entry point configuration."
+    },
+    "script": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Script URL."
+        },
+        "integrity": {
+          "type": "string",
+          "description": "Subresource Integrity hash."
+        },
+        "init_function": {
+          "type": "string",
+          "description": "Global function name to call for initialization."
+        },
+        "init_params": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Parameters to pass to init function."
+        },
+        "container_id": {
+          "type": "string",
+          "description": "DOM element ID to mount the experience into."
+        }
+      },
+      "description": "Script entry point configuration."
+    },
+    "wasm": {
+      "type": "object",
+      "properties": {
+        "module_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "WebAssembly module URL."
+        },
+        "glue_script_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "JavaScript glue code URL."
+        },
+        "memory_initial_pages": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Initial WebAssembly memory pages."
+        },
+        "memory_max_pages": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum WebAssembly memory pages."
+        }
+      },
+      "description": "WebAssembly entry point configuration."
+    },
+    "preload": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["url", "type"],
+        "properties": {
+          "url": {"type": "string", "format": "uri"},
+          "type": {"type": "string", "enum": ["script", "style", "font", "image", "model"]},
+          "integrity": {"type": "string"},
+          "crossorigin": {"type": "string", "enum": ["anonymous", "use-credentials"]}
+        }
+      },
+      "description": "Resources to preload."
+    },
+    "initialization": {
+      "type": "object",
+      "properties": {
+        "timeout_ms": {
+          "type": "integer",
+          "minimum": 1000,
+          "description": "Initialization timeout."
+        },
+        "retry_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of retry attempts on failure."
+        },
+        "ready_event": {
+          "type": "string",
+          "description": "Event name dispatched when experience is ready."
+        }
+      },
+      "description": "Initialization configuration."
+    }
+  }
+}

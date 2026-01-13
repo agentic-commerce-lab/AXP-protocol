@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/category.json",
+  "title": "Category",
+  "description": "Product category with hierarchy support.",
+  "type": "object",
+  "required": ["id", "name"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Category identifier."
+    },
+    "name": {
+      "type": "string",
+      "description": "Category name."
+    },
+    "path": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"}
+        }
+      },
+      "description": "Full category path from root to current."
+    },
+    "level": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Depth level in category hierarchy."
+    },
+    "primary": {
+      "type": "boolean",
+      "description": "Whether this is the primary category for the product."
+    },
+    "google_product_category": {
+      "type": "string",
+      "description": "Google Product Category ID for product feeds."
+    }
+  }
+}

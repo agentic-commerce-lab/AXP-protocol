@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/returns.json",
+  "title": "Returns",
+  "description": "Product return statistics and reason analysis.",
+  "type": "object",
+  "properties": {
+    "return_rate": {
+      "type": "object",
+      "properties": {
+        "percentage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Return rate percentage."
+        },
+        "category_comparison": {
+          "type": "string",
+          "enum": ["below_average", "average", "above_average"],
+          "description": "How return rate compares to category."
+        },
+        "trend": {
+          "type": "string",
+          "enum": ["improving", "stable", "worsening"],
+          "description": "Return rate trend over time."
+        },
+        "sample_size": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of orders in calculation."
+        },
+        "time_period_days": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Time period for calculation."
+        }
+      },
+      "description": "Return rate statistics."
+    },
+    "return_reasons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["reason", "percentage"],
+        "properties": {
+          "reason": {
+            "type": "string",
+            "enum": [
+              "not_as_described",
+              "wrong_size",
+              "wrong_color",
+              "defective",
+              "damaged_in_shipping",
+              "changed_mind",
+              "found_better_price",
+              "ordered_wrong_item",
+              "quality_not_expected",
+              "arrived_late",
+              "missing_parts",
+              "not_compatible",
+              "other"
+            ],
+            "description": "Return reason category."
+          },
+          "reason_label": {
+            "type": "string",
+            "description": "Human-readable reason label."
+          },
+          "percentage": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Percentage of returns for this reason."
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of returns for this reason."
+          },
+          "actionable": {
+            "type": "boolean",
+            "description": "Whether this reason indicates product issues."
+          }
+        }
+      },
+      "description": "Breakdown of return reasons."
+    },
+    "variant_return_rates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "variant_id": {"type": "string"},
+          "variant_label": {"type": "string"},
+          "return_rate_percentage": {"type": "number", "minimum": 0, "maximum": 100},
+          "primary_reason": {"type": "string"}
+        }
+      },
+      "description": "Return rates by variant."
+    },
+    "size_fit_analysis": {
+      "type": "object",
+      "properties": {
+        "fit_indicator": {
+          "type": "string",
+          "enum": ["runs_small", "true_to_size", "runs_large"],
+          "description": "Overall fit indicator."
+        },
+        "fit_distribution": {
+          "type": "object",
+          "properties": {
+            "too_small": {"type": "number", "minimum": 0, "maximum": 100},
+            "just_right": {"type": "number", "minimum": 0, "maximum": 100},
+            "too_large": {"type": "number", "minimum": 0, "maximum": 100}
+          }
+        },
+        "size_recommendation": {
+          "type": "string",
+          "description": "Size recommendation based on return data."
+        }
+      },
+      "description": "Size fit analysis for apparel/footwear."
+    },
+    "quality_issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "issue": {"type": "string"},
+          "frequency": {"type": "string", "enum": ["rare", "occasional", "common"]},
+          "percentage": {"type": "number", "minimum": 0, "maximum": 100}
+        }
+      },
+      "description": "Identified quality issues from returns."
+    },
+    "customer_satisfaction_post_return": {
+      "type": "object",
+      "properties": {
+        "refund_processed_percentage": {"type": "number"},
+        "exchange_percentage": {"type": "number"},
+        "store_credit_percentage": {"type": "number"},
+        "avg_resolution_days": {"type": "number"}
+      },
+      "description": "Return resolution statistics."
+    },
+    "disclosure_level": {
+      "type": "string",
+      "enum": ["full", "aggregate", "category", "hidden"],
+      "description": "Level of return data disclosure."
+    },
+    "data_freshness": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When return data was last updated."
+    }
+  }
+}

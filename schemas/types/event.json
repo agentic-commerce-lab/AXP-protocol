@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/event.json",
+  "title": "Event",
+  "description": "Event product details for tickets, workshops, and time-based experiences.",
+  "type": "object",
+  "required": ["event_type", "start_date"],
+  "properties": {
+    "event_type": {
+      "type": "string",
+      "enum": ["single", "recurring", "series", "on_demand"],
+      "description": "Type of event scheduling."
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Event start date and time (RFC 3339)."
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Event end date and time."
+    },
+    "timezone": {
+      "type": "string",
+      "description": "Event timezone (IANA format, e.g., 'Europe/Berlin')."
+    },
+    "duration_minutes": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Event duration in minutes."
+    },
+    "recurrence": {
+      "type": "object",
+      "properties": {
+        "frequency": {"type": "string", "enum": ["daily", "weekly", "monthly", "custom"]},
+        "interval": {"type": "integer", "minimum": 1},
+        "days_of_week": {"type": "array", "items": {"type": "integer", "minimum": 0, "maximum": 6}},
+        "end_type": {"type": "string", "enum": ["never", "date", "count"]},
+        "end_date": {"type": "string", "format": "date"},
+        "end_count": {"type": "integer", "minimum": 1}
+      },
+      "description": "Recurrence rules for recurring events."
+    },
+    "occurrences": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "start_date"],
+        "properties": {
+          "id": {"type": "string"},
+          "start_date": {"type": "string", "format": "date-time"},
+          "end_date": {"type": "string", "format": "date-time"},
+          "availability": {"$ref": "availability.json"},
+          "price": {"$ref": "price.json"}
+        }
+      },
+      "description": "Specific event occurrences with individual availability."
+    },
+    "venue": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"},
+        "address": {"$ref": "address.json"},
+        "coordinates": {
+          "type": "object",
+          "properties": {
+            "latitude": {"type": "number"},
+            "longitude": {"type": "number"}
+          }
+        },
+        "venue_type": {"type": "string", "enum": ["physical", "virtual", "hybrid"]},
+        "virtual_url": {"type": "string", "format": "uri"},
+        "instructions": {"type": "string"}
+      },
+      "description": "Event venue information."
+    },
+    "capacity": {
+      "type": "object",
+      "properties": {
+        "total": {"type": "integer", "minimum": 1},
+        "remaining": {"type": "integer", "minimum": 0},
+        "waitlist_enabled": {"type": "boolean"}
+      },
+      "description": "Event capacity information."
+    },
+    "ticket_types": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "price"],
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "description": {"type": "string"},
+          "price": {"$ref": "price.json"},
+          "availability": {"$ref": "availability.json"},
+          "min_per_order": {"type": "integer", "minimum": 1},
+          "max_per_order": {"type": "integer", "minimum": 1},
+          "includes": {"type": "array", "items": {"type": "string"}}
+        }
+      },
+      "description": "Available ticket types."
+    },
+    "organizer": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"},
+        "url": {"type": "string", "format": "uri"},
+        "contact_email": {"type": "string", "format": "email"}
+      },
+      "description": "Event organizer information."
+    },
+    "cancellation_policy": {
+      "type": "object",
+      "properties": {
+        "refundable": {"type": "boolean"},
+        "refund_deadline_hours": {"type": "integer"},
+        "partial_refund_percentage": {"type": "integer", "minimum": 0, "maximum": 100},
+        "policy_text": {"type": "string"}
+      },
+      "description": "Event cancellation and refund policy."
+    },
+    "access_instructions": {
+      "type": "string",
+      "description": "Instructions for accessing the event."
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/services/service_schema.json",
+  "title": "AXP Service",
+  "description": "Service definition for AXP capabilities.",
+  "type": "object",
+  "required": ["transports"],
+  "properties": {
+    "transports": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "url"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["rest", "mcp", "a2a", "graphql", "websocket"],
+            "description": "Transport protocol type."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Service endpoint URL."
+          },
+          "spec_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to OpenAPI/OpenRPC specification."
+          },
+          "auth_required": {
+            "type": "boolean",
+            "default": false
+          },
+          "auth_methods": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["api_key", "oauth2", "bearer", "basic", "mtls"]
+            }
+          }
+        }
+      },
+      "description": "Available transport protocols."
+    }
+  }
+}

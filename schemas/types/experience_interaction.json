@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/experience_interaction.json",
+  "title": "Experience Interaction",
+  "description": "Interaction model for embedded experiences.",
+  "type": "object",
+  "properties": {
+    "messaging": {
+      "type": "object",
+      "properties": {
+        "protocol": {
+          "type": "string",
+          "enum": ["postmessage", "broadcast_channel", "custom"],
+          "description": "Communication protocol between host and experience."
+        },
+        "channel_name": {
+          "type": "string",
+          "description": "Broadcast channel name if applicable."
+        },
+        "origin_validation": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to validate message origins."
+        }
+      },
+      "description": "Messaging configuration."
+    },
+    "inbound_events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Event name."
+          },
+          "description": {
+            "type": "string"
+          },
+          "payload_schema": {
+            "type": "object",
+            "description": "JSON Schema for event payload."
+          }
+        }
+      },
+      "description": "Events the host can send to the experience."
+    },
+    "outbound_events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Event name."
+          },
+          "description": {
+            "type": "string"
+          },
+          "payload_schema": {
+            "type": "object",
+            "description": "JSON Schema for event payload."
+          },
+          "action_type": {
+            "type": "string",
+            "enum": ["informational", "navigation", "cart_action", "preference_update", "completion"],
+            "description": "Type of action this event represents."
+          }
+        }
+      },
+      "description": "Events the experience can emit to the host."
+    },
+    "standard_events": {
+      "type": "object",
+      "properties": {
+        "on_ready": {
+          "type": "boolean",
+          "default": true,
+          "description": "Emits ready event when loaded."
+        },
+        "on_error": {
+          "type": "boolean",
+          "default": true,
+          "description": "Emits error events."
+        },
+        "on_configuration_change": {
+          "type": "boolean",
+          "default": false,
+          "description": "Emits when user changes configuration."
+        },
+        "on_add_to_cart": {
+          "type": "boolean",
+          "default": false,
+          "description": "Emits add to cart requests."
+        },
+        "on_variant_select": {
+          "type": "boolean",
+          "default": false,
+          "description": "Emits when variant is selected."
+        },
+        "on_view_change": {
+          "type": "boolean",
+          "default": false,
+          "description": "Emits when 3D view changes."
+        },
+        "on_ar_launch": {
+          "type": "boolean",
+          "default": false,
+          "description": "Emits AR launch requests."
+        }
+      },
+      "description": "Standard event support."
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Action identifier."
+          },
+          "type": {
+            "type": "string",
+            "enum": ["add_to_cart", "update_configuration", "select_variant", "request_quote", "share", "save", "compare", "custom"],
+            "description": "Action type."
+          },
+          "label": {
+            "type": "string",
+            "description": "Action button label."
+          },
+          "enabled_by_default": {
+            "type": "boolean",
+            "default": true
+          },
+          "requires_confirmation": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "description": "Actions the experience can trigger."
+    },
+    "data_binding": {
+      "type": "object",
+      "properties": {
+        "product_data": {
+          "type": "boolean",
+          "default": true,
+          "description": "Receives product data updates."
+        },
+        "variant_data": {
+          "type": "boolean",
+          "default": true,
+          "description": "Receives variant selection updates."
+        },
+        "configuration_data": {
+          "type": "boolean",
+          "default": false,
+          "description": "Receives configuration state updates."
+        },
+        "user_preferences": {
+          "type": "boolean",
+          "default": false,
+          "description": "Receives user preference data."
+        },
+        "locale": {
+          "type": "boolean",
+          "default": true,
+          "description": "Receives locale updates."
+        }
+      },
+      "description": "Data the experience can receive from the host."
+    },
+    "state_persistence": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "storage_key": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string",
+          "enum": ["session", "local", "user"],
+          "description": "Persistence scope."
+        }
+      },
+      "description": "State persistence configuration."
+    }
+  }
+}

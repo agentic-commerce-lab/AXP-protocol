@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/product.json",
+  "name": "dev.axp.product",
+  "version": "2026-01-13",
+  "title": "Product",
+  "description": "Base product schema supporting simple and complex product types including variants, configurators, events, and subscriptions. Compatible with UCP's item schema and can be used in UCP checkout sessions.",
+  "type": "object",
+  "required": ["axp", "id", "type", "title", "price", "currency", "availability"],
+  "additionalProperties": true,
+  "properties": {
+    "axp": {
+      "$ref": "axp.json#/$defs/response_product",
+      "description": "AXP protocol metadata (same pattern as UCP's 'ucp' field).",
+      "axp_request": "omit"
+    },
+    "ucp_item": {
+      "$ref": "https://ucp.dev/schemas/shopping/types/item.json",
+      "description": "UCP-compatible item representation for use in UCP checkout sessions. Automatically derived from AXP product data.",
+      "axp_request": "omit"
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique product identifier recognizable by both platform and merchant."
+    },
+    "type": {
+      "type": "string",
+      "enum": ["simple", "variant", "configurable", "bundle", "event", "subscription", "digital", "service"],
+      "description": "Product type determining available fields and behavior."
+    },
+    "title": {
+      "type": "string",
+      "description": "Product title for display.",
+      "maxLength": 500
+    },
+    "description": {
+      "type": "string",
+      "description": "Product description supporting markdown formatting."
+    },
+    "short_description": {
+      "type": "string",
+      "description": "Brief product summary for agentic interfaces.",
+      "maxLength": 200
+    },
+    "brand": {
+      "type": "string",
+      "description": "Product brand or manufacturer."
+    },
+    "sku": {
+      "type": "string",
+      "description": "Stock Keeping Unit identifier."
+    },
+    "gtin": {
+      "type": "string",
+      "description": "Global Trade Item Number (EAN, UPC, ISBN)."
+    },
+    "mpn": {
+      "type": "string",
+      "description": "Manufacturer Part Number."
+    },
+    "price": {
+      "$ref": "types/price.json",
+      "description": "Current product price."
+    },
+    "compare_at_price": {
+      "$ref": "types/price.json",
+      "description": "Original price before discount."
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$",
+      "description": "ISO 4217 currency code."
+    },
+    "availability": {
+      "$ref": "types/availability.json",
+      "description": "Product availability information."
+    },
+    "media": {
+      "type": "array",
+      "items": {"$ref": "types/media.json"},
+      "description": "Product media (images, videos, 3D models)."
+    },
+    "attributes": {
+      "type": "array",
+      "items": {"$ref": "types/attribute.json"},
+      "description": "Product attributes (color, size, material, etc.)."
+    },
+    "categories": {
+      "type": "array",
+      "items": {"$ref": "types/category.json"},
+      "description": "Product category hierarchy."
+    },
+    "variants": {
+      "$ref": "types/variants.json",
+      "description": "Variant configuration for variant/configurable products."
+    },
+    "configurator": {
+      "$ref": "types/configurator.json",
+      "description": "Configuration options for configurable products."
+    },
+    "bundle": {
+      "$ref": "types/bundle.json",
+      "description": "Bundle configuration for bundle products."
+    },
+    "event": {
+      "$ref": "types/event.json",
+      "description": "Event details for event products."
+    },
+    "subscription": {
+      "$ref": "types/subscription.json",
+      "description": "Subscription configuration for subscription products."
+    },
+    "digital": {
+      "$ref": "types/digital.json",
+      "description": "Digital product delivery information."
+    },
+    "quality_signals": {
+      "$ref": "types/quality_signals.json",
+      "description": "Quality data signals for this product."
+    },
+    "embedded_experiences": {
+      "type": "array",
+      "items": {"$ref": "types/embedded_experience.json"},
+      "description": "Available embedded experiences for this product."
+    },
+    "shipping": {
+      "$ref": "types/shipping_info.json",
+      "description": "Shipping information and estimates."
+    },
+    "return_policy": {
+      "$ref": "types/return_policy.json",
+      "description": "Return policy for this product."
+    },
+    "links": {
+      "type": "array",
+      "items": {"$ref": "types/link.json"},
+      "description": "Related links (product page, specifications, etc.)."
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional merchant-specific metadata.",
+      "additionalProperties": true
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp (RFC 3339)."
+    }
+  }
+}

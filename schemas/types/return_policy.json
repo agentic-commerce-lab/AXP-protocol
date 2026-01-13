@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/return_policy.json",
+  "title": "Return Policy",
+  "description": "Return policy for a product.",
+  "type": "object",
+  "properties": {
+    "returnable": {
+      "type": "boolean",
+      "description": "Whether the product can be returned."
+    },
+    "return_window_days": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Days allowed for returns."
+    },
+    "free_returns": {
+      "type": "boolean",
+      "description": "Whether returns are free."
+    },
+    "restocking_fee_percentage": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Restocking fee percentage."
+    },
+    "condition_requirements": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Conditions for return acceptance."
+    },
+    "return_methods": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["mail", "store", "pickup", "dropoff"]
+      },
+      "description": "Available return methods."
+    },
+    "refund_method": {
+      "type": "string",
+      "enum": ["original_payment", "store_credit", "exchange_only"],
+      "description": "How refunds are processed."
+    },
+    "policy_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Full return policy URL."
+    },
+    "exceptions": {
+      "type": "string",
+      "description": "Return policy exceptions."
+    }
+  }
+}

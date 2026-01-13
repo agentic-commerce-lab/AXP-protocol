@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ucp.dev/schemas/axp/types/social_proof.json",
+  "title": "Social Proof",
+  "description": "Social proof indicators for products.",
+  "type": "object",
+  "properties": {
+    "purchase_activity": {
+      "type": "object",
+      "properties": {
+        "recent_purchases": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of recent purchases (time period defined by merchant)."
+        },
+        "recent_purchases_period_hours": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "viewing_now": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of people currently viewing."
+        },
+        "in_carts": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of active carts containing this product."
+        },
+        "total_sold": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total units sold."
+        }
+      },
+      "description": "Real-time purchase activity."
+    },
+    "endorsements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["expert", "celebrity", "influencer", "publication", "award"]
+          },
+          "name": {"type": "string"},
+          "title": {"type": "string"},
+          "quote": {"type": "string"},
+          "source_url": {"type": "string", "format": "uri"},
+          "date": {"type": "string", "format": "date"},
+          "image_url": {"type": "string", "format": "uri"}
+        }
+      },
+      "description": "Expert and celebrity endorsements."
+    },
+    "awards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "issuer": {"type": "string"},
+          "year": {"type": "integer"},
+          "category": {"type": "string"},
+          "badge_url": {"type": "string", "format": "uri"},
+          "verification_url": {"type": "string", "format": "uri"}
+        }
+      },
+      "description": "Product awards and recognitions."
+    },
+    "media_mentions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "publication": {"type": "string"},
+          "title": {"type": "string"},
+          "url": {"type": "string", "format": "uri"},
+          "date": {"type": "string", "format": "date"},
+          "sentiment": {"type": "string", "enum": ["positive", "neutral", "mixed"]},
+          "quote": {"type": "string"}
+        }
+      },
+      "description": "Media coverage and mentions."
+    },
+    "user_generated_content": {
+      "type": "object",
+      "properties": {
+        "photo_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "video_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "social_mentions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "hashtag": {
+          "type": "string"
+        },
+        "featured_ugc": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {"type": "string", "enum": ["photo", "video"]},
+              "url": {"type": "string", "format": "uri"},
+              "source_platform": {"type": "string"},
+              "author": {"type": "string"}
+            }
+          }
+        }
+      },
+      "description": "User-generated content metrics."
+    },
+    "bestseller_badges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "badge_type": {
+            "type": "string",
+            "enum": ["bestseller", "top_rated", "most_wished", "hot_new_release", "amazon_choice", "editors_pick"]
+          },
+          "category": {"type": "string"},
+          "rank": {"type": "integer", "minimum": 1},
+          "period": {"type": "string"}
+        }
+      },
+      "description": "Bestseller and featured badges."
+    },
+    "community_stats": {
+      "type": "object",
+      "properties": {
+        "followers": {"type": "integer", "minimum": 0},
+        "discussions": {"type": "integer", "minimum": 0},
+        "tips_shared": {"type": "integer", "minimum": 0},
+        "community_rating": {"type": "number", "minimum": 0, "maximum": 5}
+      },
+      "description": "Community engagement statistics."
+    }
+  }
+}
