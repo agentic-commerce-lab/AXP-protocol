@@ -82,12 +82,11 @@
           "description": "Filter criteria."
         },
         {
-          "name": "sort": {
+          "name": "sort",
           "required": false,
           "schema": {
             "type": "string",
             "enum": ["relevance", "price_asc", "price_desc", "rating", "newest"]
-          }
           },
           "description": "Sort order."
         },
