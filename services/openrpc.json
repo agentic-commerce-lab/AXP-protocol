@@ -51,7 +51,7 @@
         "name": "product",
         "schema": {"$ref": "../schemas/product.json"}
       },
-      "tags": [{"name": "Product Data"}]
+      "tags": [{"$ref": "#/components/tags/product_data"}]
     },
     {
       "name": "axp.searchProducts",
@@ -82,12 +82,11 @@
           "description": "Filter criteria."
         },
         {
-          "name": "sort": {
+          "name": "sort",
           "required": false,
           "schema": {
             "type": "string",
             "enum": ["relevance", "price_asc", "price_desc", "rating", "newest"]
-          }
           },
           "description": "Sort order."
         },
@@ -113,7 +112,7 @@
           }
         }
       },
-      "tags": [{"name": "Product Data"}]
+      "tags": [{"$ref": "#/components/tags/product_data"}]
     },
     {
       "name": "axp.getVariants",
@@ -130,7 +129,7 @@
         "name": "variants",
         "schema": {"$ref": "../schemas/types/variants.json"}
       },
-      "tags": [{"name": "Product Data"}]
+      "tags": [{"$ref": "#/components/tags/product_data"}]
     },
     {
       "name": "axp.calculateConfiguration",
@@ -167,7 +166,7 @@
           }
         }
       },
-      "tags": [{"name": "Product Data"}]
+      "tags": [{"$ref": "#/components/tags/product_data"}]
     },
     {
       "name": "axp.getQualityData",
@@ -196,7 +195,7 @@
         "name": "qualityData",
         "schema": {"$ref": "../schemas/quality_data.json"}
       },
-      "tags": [{"name": "Quality Data"}]
+      "tags": [{"$ref": "#/components/tags/quality_data"}]
     },
     {
       "name": "axp.getReviews",
@@ -241,7 +240,7 @@
         "name": "reviews",
         "schema": {"$ref": "../schemas/types/reviews.json"}
       },
-      "tags": [{"name": "Quality Data"}]
+      "tags": [{"$ref": "#/components/tags/quality_data"}]
     },
     {
       "name": "axp.getMerchantTrust",
@@ -252,7 +251,7 @@
         "name": "merchantTrust",
         "schema": {"$ref": "../schemas/types/merchant_trust.json"}
       },
-      "tags": [{"name": "Quality Data"}]
+      "tags": [{"$ref": "#/components/tags/quality_data"}]
     },
     {
       "name": "axp.getExperience",
@@ -269,7 +268,7 @@
         "name": "experience",
         "schema": {"$ref": "../schemas/experience.json"}
       },
-      "tags": [{"name": "Experience Embedding"}]
+      "tags": [{"$ref": "#/components/tags/experience_embedding"}]
     },
     {
       "name": "axp.listExperiences",
@@ -297,23 +296,23 @@
           "items": {"$ref": "../schemas/types/embedded_experience.json"}
         }
       },
-      "tags": [{"name": "Experience Embedding"}]
+      "tags": [{"$ref": "#/components/tags/experience_embedding"}]
     }
   ],
   "components": {
-    "tags": [
-      {
+    "tags": {
+      "product_data": {
         "name": "Product Data",
         "description": "Methods for accessing product information, variants, and configurations."
       },
-      {
+      "quality_data": {
         "name": "Quality Data",
         "description": "Methods for accessing reviews, returns, and trust signals."
       },
-      {
+      "experience_embedding": {
         "name": "Experience Embedding",
         "description": "Methods for accessing sandboxed embedded experiences."
       }
-    ]
+    }
   }
 }
